@@ -1,0 +1,6 @@
+app/ssh/
+__pycache__
+*.pyc
+configDB.ini
+app/db/postgresql/data/
+app/db/readme.txt
