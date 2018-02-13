@@ -1,9 +1,14 @@
 FROM tiangolo/uwsgi-nginx:python3.6-alpine3.7
 MAINTAINER Aleksandr Kirilyuk <alx@nsbill.ru>
 
-RUN pip install flask
+RUN pip install flask && pip install flask-sqlalchemy 
 RUN apk update && apk add py-mysqldb openssh-client postgresql-client && pip install mysql-connector-python &&\
-    mkdir /root/.ssh
+apk add py3-psycopg2 && mkdir /root/.ssh
+RUN apk update \
+  && apk add --virtual build-deps gcc python3-dev musl-dev \
+    && apk add postgresql-dev \
+      && pip install psycopg2 \
+      && apk del build-deps
 
 # By default, allow unlimited file sizes, modify it to limit the file sizes
 # To have a maximum of 1 MB (Nginx's default) change the line to:
