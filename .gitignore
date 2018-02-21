@@ -4,3 +4,4 @@ __pycache__
 configDB.ini
 app/db/postgresql/data/
 app/db/readme.txt
+migrations
