@@ -3,6 +3,7 @@ services:
   web:
     build: .
     volumes:
+      - /etc/localtime:/etc/localtime:ro
       - ./app:/app
     ports:
       - "8555:80"
@@ -19,6 +20,7 @@ services:
     image: postgresql10.1/alpine:latest
     restart: always
     volumes:
+      - /etc/localtime:/etc/localtime:ro
       - ./app/db/postgresql/data:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: 'DhjnYjub2018Ufls'

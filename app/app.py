@@ -1,11 +1,16 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from config import Configuration
-from auth.blueprint import auth
+from flask_sqlalchemy import SQLAlchemy
+
+#from flask_migrate import Migrate, MigrateCommand
+#from flask_script import Manager
 
 app = Flask(__name__)
+app.config.from_object(Configuration)
+
 db = SQLAlchemy(app)
 
+#migrate = Migrate(app, db)
+#manager = Manager(app)
+#manager.add_command('db', MigrateCommand)
 
-app.config.from_object(Configuration)
-app.register_blueprint(auth, url_prefix='/auth')

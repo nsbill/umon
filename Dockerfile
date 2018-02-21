@@ -1,7 +1,7 @@
 FROM tiangolo/uwsgi-nginx:python3.6-alpine3.7
 MAINTAINER Aleksandr Kirilyuk <alx@nsbill.ru>
 
-RUN pip install flask && pip install flask-sqlalchemy 
+RUN pip install flask && pip install flask-sqlalchemy flask_migrate flask_script
 RUN apk update && apk add py-mysqldb openssh-client postgresql-client && pip install mysql-connector-python &&\
 apk add py3-psycopg2 && mkdir /root/.ssh
 RUN apk update \

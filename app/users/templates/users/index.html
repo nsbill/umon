@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Users of Umon
+{% endblock %}
+
+{% block content_titel %}
+  All users of UMon
+{% endblock %}
+
+{% block content %}
+	  <div class="row">
+			<div class="grid-container">
+        <div class="grid-x grid-padding-x align-center"">
+						<div class="medium-6 cell">
+              Users all
+								<div class="col-sm-4">
+										<table class="table table-hover" style="font-size: 12px">
+										<tr>
+											 <th>login:</th>
+											 <th>password:</th>
+											 <th>fio:</th>
+											 <th>phone:</th>
+											 <th>disable:</th>
+											 <th>delete:</th>
+											 <th>registration:</th>
+										</tr>
+										</thead>
+										<tbody>
+              			{% for user in users %}
+										<tr>
+												<td><b>{{ user.login }}</b></td>
+												<td><b>{{ user.password }}</b></td>
+												<td><b>{{ user.fio}}</b></td>
+												<td><b>{{ user.phone}}</b></td>
+												<td><b>{{ user.disable }}</b></td>
+												<td><b>{{ user.delete }}</b></td>
+												<td><b>{{ user.registration }}</b></td>
+										</tr>
+									  {% endfor %}
+										</tbody>
+										</table>
+								</div>
+            </div>
+				</div>
+			</div>
+		</div>
+{% endblock %}
