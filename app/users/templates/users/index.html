@@ -23,7 +23,13 @@
 											 <th>phone:</th>
 											 <th>disable:</th>
 											 <th>delete:</th>
-											 <th>registration:</th>
+                       <th>street:</th>
+                       <th>build:</th>
+                       <th>flat:</th>
+                       <th>cid:</th>
+                       <th>ip:</th>
+                       <th>registration:</th>
+                       
 										</tr>
 										</thead>
 										<tbody>
@@ -35,6 +41,11 @@
 												<td><b>{{ user.phone}}</b></td>
 												<td><b>{{ user.disable }}</b></td>
 												<td><b>{{ user.delete }}</b></td>
+												<td><b>{{ user.address_street }}</b></td>
+												<td><b>{{ user.address_build }}</b></td>
+												<td><b>{{ user.address_flat }}</b></td>
+                        <td><b>{{ user.cid }}</b></td>
+                        <td><b>{{ user.ip }}</b></td>
 												<td><b>{{ user.registration }}</b></td>
 										</tr>
 									  {% endfor %}

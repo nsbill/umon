@@ -159,12 +159,11 @@ def query_with_user(uid):
         dbconfig = read_db_config()
         conn = MySQLConnection(**dbconfig)
         cursor = conn.cursor()
-        cursor.execute('SELECT u.id, u.uid, DATE_FORMAT(u.activate, "%Y-%m-%d"),\
-                        DATE_FORMAT(u.expire, "%Y-%m%-%d"), u.credit, u.reduction,\
-                        DATE_FORMAT(u.reduction_date, "%Y-%m-%d"),\
-                        DATE_FORMAT(u.registration, "%Y-%m-%d"),\
+        cursor.execute('SELECT u.id, u.uid, u.activate,\
+                        u.expire, u.credit, u.reduction,\
+                        u.reduction_date,u.registration,\
                         (DECODE(u.password, "test12345678901234567890")),u.gid,u.disable,u.company_id,u.bill_id,u.ext_bill_id,\
-                        DATE_FORMAT(u.credit_date, "%Y-%m-%d"),u.domain_id, u.deleted,\
+                        u.credit_date, u.domain_id, u.deleted,\
                         up.fio, up.phone, up.email, up.address_street, up.address_build, up.address_flat, up.comments,\
                         up.contract_id, up.contract_date, up.pasport_num, up.pasport_date, up.pasport_grant,up._telbot,up._telbot_send,\
                         up._vk,up._vk_send, d.tp_id, d.logins, INET_NTOA(d.ip), INET_NTOA(d.netmask), d.cid, d.disable, b.deposit\
@@ -220,3 +219,53 @@ def query_with_users_uid():
 
     if __name__ == '__main__':
         query_with_users_uid()
+
+def query_with_tarifs():
+    try:
+        dbconfig = read_db_config()
+        conn = MySQLConnection(**dbconfig)
+        cursor = conn.cursor()
+        cursor.execute('SELECT t.id, t.name, t.day_fee, t.active_day_fee, t.month_fee, t.comments FROM tarif_plans t LIMIT 2000');
+
+        all = {}
+        a = []
+        for row in iter_row(cursor, 10):
+#            print(row)
+            UidDepositDict = dict(zip(['tpid','name', 'day_fee', 'month_fee', 'active_day_fee', 'comments' ], row)) 
+            all = a.append(UidDepositDict)
+
+    except Error as e:
+        print(e)
+
+    finally:
+        cursor.close()
+        conn.close()
+        return a
+
+    if __name__ == '__main__':
+        query_with_tarifs()
+
+def query_with_groups():
+    try:
+        dbconfig = read_db_config()
+        conn = MySQLConnection(**dbconfig)
+        cursor = conn.cursor()
+        cursor.execute('SELECT g.gid, g.name, g.descr FROM groups g LIMIT 2000');
+
+        all = {}
+        a = []
+        for row in iter_row(cursor, 10):
+#            print(row)
+            UidDepositDict = dict(zip(['gid','name', 'descr' ], row)) 
+            all = a.append(UidDepositDict)
+
+    except Error as e:
+        print(e)
+
+    finally:
+        cursor.close()
+        conn.close()
+        return a
+
+    if __name__ == '__main__':
+        query_with_groups()

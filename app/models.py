@@ -1,5 +1,6 @@
 from app import db
 from datetime import datetime
+from sqlalchemy.dialects import postgresql
 
 class AdminUser(db.Model):
     id = db.Column(db.Integer,primary_key=True)
@@ -18,7 +19,7 @@ class AdminUser(db.Model):
 class Users(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    uid = db.Column(db.Integer, unique=True)
+    uid = db.Column(db.Integer, unique=True, nullable=False)
     login = db.Column(db.String(20), unique=True, nullable=False)
     password = db.Column(db.String(50))
     fio = db.Column(db.String(150))
@@ -28,8 +29,10 @@ class Users(db.Model):
     delete = db.Column(db.Boolean, default=False)
     address_id = db.relationship('Address', backref='users', lazy='dynamic')
     networks_id = db.relationship('Networks', backref='networks', lazy='dynamic')
-    groups_id = db.relationship('Groups', backref='groups', lazy='dynamic')
-    tarifs_id = db.relationship('Tarifs', backref='tarifs', lazy='dynamic')
+    tarifs_id = db.Column(db.Integer, db.ForeignKey('tarifs.tpid'))
+    groups_id = db.Column(db.Integer, db.ForeignKey('groups.gid'))
+ #   groups_id = db.relationship('Groups', backref='groups', lazy='dynamic')
+ #   tarifs_id = db.relationship('Tarifs', backref='tarifs', lazy='dynamic')
     users_pi = db.relationship('UsersPI', backref='userspi', lazy='dynamic')
 
 #    def __init__(self,uid,login,password,fio,phone,descr,disable,delete,address_id):
@@ -50,10 +53,10 @@ class Address(db.Model):
     __tablename__ = 'address'
     id = db.Column(db.Integer, primary_key=True)
     uid = db.Column(db.Integer, db.ForeignKey('users.uid'), unique=True, nullable=False)
-    address = db.Column(db.String(300))
-    street = db.Column(db.String(80))
-    building = db.Column(db.String(10))
-    flat = db.Column(db.String(10))
+    address = db.Column(db.String(300),default='')
+    street = db.Column(db.String(80),default='')
+    building = db.Column(db.String(10),default='')
+    flat = db.Column(db.String(10),default='')
 
 #    def __init__(self,uid,address,street,building,flat):
 #        self.uid = uid
@@ -66,25 +69,28 @@ class Networks(db.Model):
     __tablename__ = 'networks'
     id = db.Column(db.Integer, primary_key=True)
     uid = db.Column('uid', db.Integer, db.ForeignKey('users.uid'), unique=True, nullable=False)
-    ip = db.Column('ip', db.Integer)
-    netmask = db.Column('netmask', db.Integer)
+    ip = db.Column('ip', postgresql.INET)
+    netmask = db.Column('netmask', postgresql.INET)
     cid = db.Column('cid', db.String(17))
 
 class Groups(db.Model):
     __tablename__ = 'groups'
     id = db.Column(db.Integer, primary_key=True)
-    uid = db.Column('uid', db.Integer, db.ForeignKey('users.uid'), unique=True, nullable=False)
+#    uid = db.Column('uid', db.Integer, db.ForeignKey('users.uid'), unique=True, nullable=False)
+    gid = db.Column('gid', db.Integer, unique=True, nullable=False)
     name = db.Column('name', db.String(100))
     descr = db.Column('descr', db.String(200))
 
 class Tarifs(db.Model):
     __tablename__ = 'tarifs'
     id = db.Column(db.Integer, primary_key=True)
-    uid = db.Column('uid', db.Integer, db.ForeignKey('users.uid'), unique=True, nullable=False)
+#    uid = db.Column('uid', db.Integer, db.ForeignKey('users.uid'), unique=True, nullable=False)
+    tpid = db.Column('tpid', db.Integer, unique=True, nullable=False)
     name = db.Column('name', db.String(100))
     day_fee = db.Column('day_fee', db.Float)
-    activ_day_fee = db.Column('activ_day_fee', db.Float)
-    descr = db.Column('descr', db.String(200))
+    month_fee = db.Column('month_fee', db.Float)
+    active_day_fee = db.Column('active_day_fee', db.Float)
+    comments = db.Column('comments', db.String(200))
 
 #class Aaa(db.Model):
 #    __tablename__ = 'aaa'
@@ -95,23 +101,23 @@ class Tarifs(db.Model):
 #    descr = db.Column('descr', db.String(200))
 
 class UsersPI(db.Model):
-    __tablename__ = 'usersip'
+    __tablename__ = 'userspi'
     id = db.Column(db.Integer, primary_key=True)
     uid = db.Column('uid', db.Integer, db.ForeignKey('users.uid'), unique=True, nullable=False)
     balance = db.Column('balance', db.Float)
-    registration = db.Column('registration', db.DateTime, default='0000-00-00')
+    registration = db.Column('registration', db.DateTime)
     reduction = db.Column('reduction', db.Float)
-    reduction_date = db.Column('reduction_date', db.DateTime, default='0000-00-00')
+    reduction_date = db.Column('reduction_date', db.DateTime)
     credit = db.Column('credit', db.Float)
-    credit_date = db.Column('credit_date', db.DateTime, default='0000-00-00')
+    credit_date = db.Column('credit_date', db.DateTime)
     archive = db.Column('archive', db.Boolean)
     contract_id = db.Column('contract_id', db.String(25))
-    contract_date = db.Column('contract_date', db.DateTime, default='0000-00-00')
+    contract_date = db.Column('contract_date', db.DateTime)
     pasport_num = db.Column('pasport_num', db.String(25))
-    pasport_date = db.Column('pasport_date', db.DateTime, default='0000-00-00')
-    telegram = db.Column(db.Integer)
-    telegram_send = db.Column(db.Integer)
-    vk = db.Column(db.Integer)
-    vk_send = db.Column(db.Integer)
+    pasport_date = db.Column('pasport_date', db.DateTime)
+    telegram = db.Column(db.Integer, default=0)
+    telegram_send = db.Column(db.Integer,default=0)
+    vk = db.Column(db.Integer,default=0)
+    vk_send = db.Column(db.Integer,default=0)
 
 
