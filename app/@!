@@ -38,22 +38,33 @@ def addallusers():
 
 
     lgid = [ i[0] for i in db.session.query(Groups.gid) ]   # выборка gid из локальной базы PostgreSQL
-    if lgid==[]:
+    print('--lgid--'*14)
+    print(lgid)
+    if lgid:
         gr0 = Groups(gid=99999, name='', descr='')              # группа 0
         db.session.add(gr0)
         db.session.commit()                                     # сохраняем в базу PostgreSQL
 
     g_id=[]
     for i in lgid:
+        print('===i==='*5)
+        print(i)
         if i == 99999:
             i = 0
         else:
             g_id.append(i)
+    print(g_id)
+    print('=lgid='*10)
     groups = query_with_groups()                            # выборка тарифных планов из базы Abills
     gr_id = [i['gid'] for i in groups]                      # выборка gid из базы Abills
+    print('=gr_id=')
+    print(gr_id)
     g = set(g_id) ^ set(gr_id)                              # Сортировка и удаление существующих gid
     g = list(g)
+    print('g')
+    print(g)
     groups = [ query_with_group_gid(gid=i)[0] for i in g ]  # выборка пользователей по gid из базы Abills
+    print(groups)
     for group in groups:
         gr = Groups(gid=group.get('gid'),
                 name=group.get('name'),

@@ -245,6 +245,33 @@ def query_with_tarifs():
     if __name__ == '__main__':
         query_with_tarifs()
 
+def query_with_tarif_tpid(tpid):
+    try:
+        dbconfig = read_db_config()
+        conn = MySQLConnection(**dbconfig)
+        cursor = conn.cursor()
+        cursor.execute('SELECT t.id, t.name, t.day_fee, t.active_day_fee, t.month_fee, t.comments FROM tarif_plans t\
+                        WHERE t.id={tpid}\
+                        LIMIT 1;'.format(tpid=str(tpid)))
+
+        all = {}
+        a = []
+        for row in iter_row(cursor, 10):
+#            print(row)
+            UidDepositDict = dict(zip(['tpid','name', 'day_fee', 'month_fee', 'active_day_fee', 'comments' ], row)) 
+            all = a.append(UidDepositDict)
+
+    except Error as e:
+        print(e)
+
+    finally:
+        cursor.close()
+        conn.close()
+        return a
+
+    if __name__ == '__main__':
+        query_with_tarif_tpid(tpid)
+
 def query_with_groups():
     try:
         dbconfig = read_db_config()
@@ -269,3 +296,30 @@ def query_with_groups():
 
     if __name__ == '__main__':
         query_with_groups()
+
+def query_with_group_gid(gid):
+    try:
+        dbconfig = read_db_config()
+        conn = MySQLConnection(**dbconfig)
+        cursor = conn.cursor()
+        cursor.execute('SELECT g.gid, g.name, g.descr FROM groups g \
+                        WHERE g.gid={gid}\
+                        LIMIT 1;'.format(gid=str(gid)))
+
+        all = {}
+        a = []
+        for row in iter_row(cursor, 10):
+#            print(row)
+            UidDepositDict = dict(zip(['gid','name', 'descr' ], row)) 
+            all = a.append(UidDepositDict)
+
+    except Error as e:
+        print(e)
+
+    finally:
+        cursor.close()
+        conn.close()
+        return a
+
+    if __name__ == '__main__':
+        query_with_group_gid(gid)
