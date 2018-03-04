@@ -1,6 +1,7 @@
 from app import db
 from flask import Blueprint
 from flask import render_template
+from datetime import datetime
 import sys
 sys.path.insert(0, '/app/db')
 
@@ -21,12 +22,14 @@ def index():
 @users.route('/user/<uid>')
 def user(uid):
     ''' Выборка данных о пользователе по UID '''
-    UserInfo =[ i for i in db.session.query(Users,Address,Networks,UsersPI)
+    UserInfo =[ i for i in db.session.query(Users,Address,Networks,UsersPI,Tarifs,Groups)
                                             .filter(Users.uid == uid,
                                                 Address.uid == uid,
                                                 Networks.uid == uid,
-                                                UsersPI.uid == uid).first()]
-    return render_template('users/userinfo.html', UserInfo=UserInfo)
+                                                UsersPI.uid == uid,
+                                                Tarifs.tpid == Users.tarifs_id,
+                                                Groups.gid == Users.groups_id).first()]
+    return render_template('users/userinfo.html', UserInfo=UserInfo, DateTime=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
 @users.route('/addallusers')
 def addallusers():
@@ -110,7 +113,7 @@ def addallusers():
                 password=user.get('password').decode('utf-8'),
                 fio=user.get('fio').upper(),
                 phone=user.get('phone'),
-                descr=user.get('descr'),
+                descr=user.get('comments'),
                 disable=user.get('disable'),
                 delete=user.get('deleted'),
                 tarifs_id=user.get('tp_id'),
