@@ -58,12 +58,14 @@ class Address(db.Model):
     building = db.Column(db.String(10),default='')
     flat = db.Column(db.String(10),default='')
 
-#    def __init__(self,uid,address,street,building,flat):
-#        self.uid = uid
-#        self.address = address
-#        self.street = street
-#        self.building = building
-#        self.flat = flat
+    def __init__(self,uid,address,street,building,flat):
+        self.uid = uid
+        self.address = address
+        self.street = street
+        self.building = building
+        self.flat = flat
+    def __repr__(self):
+        return 'uid: %r>' % (self.uid)
 
 class Networks(db.Model):
     __tablename__ = 'networks'
@@ -92,29 +94,21 @@ class Tarifs(db.Model):
     active_day_fee = db.Column('active_day_fee', db.Float)
     comments = db.Column('comments', db.String(200))
 
-#class Aaa(db.Model):
-#    __tablename__ = 'aaa'
-#    id = db.Column(db.Integer, primary_key=True)
-#    name = db.Column('name', db.String(100))
-#    day_fee = db.Column('day_fee', db.Float)
-#    activ_day_fee = db.Column('activ_day_fee', db.Float)
-#    descr = db.Column('descr', db.String(200))
-
 class UsersPI(db.Model):
     __tablename__ = 'userspi'
     id = db.Column(db.Integer, primary_key=True)
     uid = db.Column('uid', db.Integer, db.ForeignKey('users.uid'), unique=True, nullable=False)
     balance = db.Column('balance', db.Float)
-    registration = db.Column('registration', db.DateTime)
+    registration = db.Column('registration', db.Date, default='2000-01-01')
     reduction = db.Column('reduction', db.Float)
-    reduction_date = db.Column('reduction_date', db.DateTime)
+    reduction_date = db.Column('reduction_date', db.DateTime, default='2000-01-01')
     credit = db.Column('credit', db.Float)
-    credit_date = db.Column('credit_date', db.DateTime)
-    archive = db.Column('archive', db.Boolean)
+    credit_date = db.Column('credit_date', db.DateTime, default='2000-01-01')
+    archive = db.Column('archive', db.Boolean,default=False)
     contract_id = db.Column('contract_id', db.String(25))
-    contract_date = db.Column('contract_date', db.DateTime)
+    contract_date = db.Column('contract_date', db.Date, default='2000-01-01')
     pasport_num = db.Column('pasport_num', db.String(25))
-    pasport_date = db.Column('pasport_date', db.DateTime)
+    pasport_date = db.Column('pasport_date', db.Date, default='2000-01-01')
     telegram = db.Column(db.Integer, default=0)
     telegram_send = db.Column(db.Integer,default=0)
     vk = db.Column(db.Integer,default=0)

@@ -3,7 +3,6 @@ from flask import Blueprint
 from flask import render_template
 import sys
 sys.path.insert(0, '/app/db')
-
 from mysql_select import query_with_allusers, query_with_user, query_with_users_uid, query_with_tarifs, query_with_tarif_tpid, query_with_groups, query_with_group_gid
 import subprocess
 from models import Users, Address, Networks, Groups, Tarifs, UsersPI
@@ -11,22 +10,13 @@ from models import Users, Address, Networks, Groups, Tarifs, UsersPI
 users = Blueprint('users',__name__, template_folder='templates')
 @users.route('/')
 def index():
-    ''' Выборка всех пользователей из базы PostgreSQL '''
-    UsersALL =[ i for i in db.session.query(Users,Address,Networks,UsersPI)
-                                            .filter(Users.uid == Address.uid,
-                                                    Users.uid == Networks.uid,#
-                                                    Users.uid == UsersPI.uid).all()]
-    return render_template('users/index.html', UsersALL=UsersALL)
-
-@users.route('/user/<uid>')
-def user(uid):
-    ''' Выборка данных о пользователе по UID '''
-    UserInfo =[ i for i in db.session.query(Users,Address,Networks,UsersPI)
-                                            .filter(Users.uid == uid,
-                                                Address.uid == uid,
-                                                Networks.uid == uid,
-                                                UsersPI.uid == uid).first()]
-    return render_template('users/userinfo.html', UserInfo=UserInfo)
+    users = Users.query.all()
+    usersinfo = []
+    for user in users:# выборка в словарь
+        usersinfo.append(Address.query.filter_by(uid=user.uid).first())
+        usersinfo.append(Networks.query.filter_by(uid=user.uid).first())
+        usersinfo.append(UsersPI.query.filter_by(uid=user.uid).first())
+    return render_template('users/index.html',users=users,usersinfo=usersinfo)
 
 @users.route('/addallusers')
 def addallusers():
@@ -108,7 +98,7 @@ def addallusers():
         userdata = Users(uid=user.get('uid'),
                 login=user.get('login'),
                 password=user.get('password').decode('utf-8'),
-                fio=user.get('fio').upper(),
+                fio=user.get('fio'),
                 phone=user.get('phone'),
                 descr=user.get('descr'),
                 disable=user.get('disable'),
@@ -119,7 +109,7 @@ def addallusers():
 
         useraddr = Address(uid=user.get('uid'),
                 address=user.get('address'),
-                street=user.get('address_street').upper(),
+                street=user.get('address_street'),
                 building=user.get('address_build'),
                 flat=user.get('address_flat'))
         db.session.add(useraddr) # добавляем в базу PostgreSQL
@@ -127,26 +117,25 @@ def addallusers():
         usernet = Networks(uid=user.get('uid'),
                 ip=user.get('ip'),
                 netmask=user.get('netmask'),
-                cid=user.get('cid').upper())
+                cid=user.get('cid'))
         db.session.add(usernet) # добавляем в базу PostgreSQL
 
         userpi = UsersPI(uid=user.get('uid'),
-              balance=user.get('deposit'),
-              registration=user.get('registration'),
+              balance=user.get('balance'),
+              registration =user.get('registration'),
               reduction=user.get('reduction'),
               reduction_date=user.get('reduction_date'),
               credit=user.get('credit'),
               credit_date=user.get('credit_date'),
-#              archive=user.get('archive'),
-              archive=False,
+              archive=user.get('archive'),
               contract_id=user.get('contract_id'),
               contract_date=user.get('contract_date'),
               pasport_num=user.get('pasport_num'),
               pasport_date=user.get('pasport_date'),
-              telegram=user.get('_telbot'),
-              telegram_send=user.get('_telbot_send'),
-              vk=user.get('_vk'),
-              vk_send=user.get('_vk_send'))
+              telegram=user.get('telegram'),
+              telegram_send=user.get('telegram_send'),
+              vk=user.get('vk'),
+              vk_send=user.get('vk_send'))
         db.session.add(userpi) # добавляем в базу PostgreSQL
 
     db.session.commit() # сохраняем в базу PostgreSQL
