@@ -120,8 +120,8 @@ def query_with_allusers():
                         DATE_FORMAT(u.expire, "%Y-%m%-%d"), u.credit, u.reduction,\
                         DATE_FORMAT(u.reduction_date, "%Y-%m-%d"),\
                         DATE_FORMAT(u.registration, "%Y-%m-%d"),\
-                        (DECODE(u.password, "test12345678901234567890")),u.gid,u.disable,u.company_id,u.bill_id,u.ext_bill_id,\
-                        DATE_FORMAT(u.credit_date, "%Y-%m-%d"),u.domain_id, u.deleted,\
+                        (DECODE(u.password, "test12345678901234567890")),u.gid,u.disable,u.company_id,u.bill_id,\
+                        DATE_FORMAT(u.credit_date, "%Y-%m-%d"), u.deleted,\
                         up.fio, up.phone, up.email, up.address_street, up.address_build, up.address_flat, up.comments,\
                         up.contract_id, up.contract_date, up.pasport_num, up.pasport_date, up.pasport_grant,up._telbot,up._telbot_send,\
                         up._vk,up._vk_send, d.tp_id, d.logins, INET_NTOA(d.ip), INET_NTOA(d.netmask), d.cid, d.disable, b.deposit\
@@ -136,10 +136,10 @@ def query_with_allusers():
         for row in iter_row(cursor, 10):
 #            print(row)
             UidDepositDict = dict(zip(['login','uid','activate','expire','credit','reduction','reduction_date','registration','password','gid','disable',\
-                                        'company_id','bill_id','ext_bill_id','credit_date','domain_id','deleted','fio','phone', 'email',\
-                                        'address_street', 'address_build', 'address_flat', 'comments',\
+                                        'company_id','bill_id','credit_date','deleted','fio','phone', 'email',\
+                                        'street', 'build', 'flat', 'descr',\
                                         'contract_id', 'contract_date', 'pasport_num', 'pasport_date', 'pasport_grant',\
-                                        '_telbot','_telbot_send','_vk','_vk_send','tp_id', 'logins','ip','netmask','cid', 'disable','deposit' ], row)) 
+                                        'telegram','teleram_send','vk','vk_send','tpid', 'logins','ip','netmask','cid', 'status','deposit' ], row)) 
             all = a.append(UidDepositDict)
 
     except Error as e:
@@ -162,8 +162,8 @@ def query_with_user(uid):
         cursor.execute('SELECT u.id, u.uid, u.activate,\
                         u.expire, u.credit, u.reduction,\
                         u.reduction_date,u.registration,\
-                        (DECODE(u.password, "test12345678901234567890")),u.gid,u.disable,u.company_id,u.bill_id,u.ext_bill_id,\
-                        u.credit_date, u.domain_id, u.deleted,\
+                        (DECODE(u.password, "test12345678901234567890")),u.gid,u.disable,u.company_id,u.bill_id,\
+                        u.credit_date, u.deleted,\
                         up.fio, up.phone, up.email, up.address_street, up.address_build, up.address_flat, up.comments,\
                         up.contract_id, up.contract_date, up.pasport_num, up.pasport_date, up.pasport_grant,up._telbot,up._telbot_send,\
                         up._vk,up._vk_send, d.tp_id, d.logins, INET_NTOA(d.ip), INET_NTOA(d.netmask), d.cid, d.disable, b.deposit\
@@ -175,13 +175,15 @@ def query_with_user(uid):
                         LIMIT 1;'.format(uid=str(uid)))
         all = {}
         a = []
+
         for row in iter_row(cursor, 10):
 #            print(row)
             UidDepositDict = dict(zip(['login','uid','activate','expire','credit','reduction','reduction_date','registration','password','gid','disable',\
-                                        'company_id','bill_id','ext_bill_id','credit_date','domain_id','deleted','fio','phone', 'email',\
-                                        'address_street', 'address_build', 'address_flat', 'comments',\
+                                        'company_id','bill_id','credit_date','deleted','fio','phone', 'email',\
+                                        'street', 'building', 'flat', 'descr',\
                                         'contract_id', 'contract_date', 'pasport_num', 'pasport_date', 'pasport_grant',\
-                                        '_telbot','_telbot_send','_vk','_vk_send','tp_id', 'logins','ip','netmask','cid', 'disable','deposit' ], row)) 
+                                        'telegram','telegram_send','vk','vk_send','tpid', 'logins','ip','netmask','cid', 'status','deposit' ], row)) 
+
             all = a.append(UidDepositDict)
 
     except Error as e:
@@ -282,7 +284,8 @@ def query_with_groups():
         all = {}
         a = []
         for row in iter_row(cursor, 10):
-#            print(row)
+            print('=GROUP_ID=*'*10)
+            print(row)
             UidDepositDict = dict(zip(['gid','name', 'descr' ], row)) 
             all = a.append(UidDepositDict)
 
@@ -323,3 +326,49 @@ def query_with_group_gid(gid):
 
     if __name__ == '__main__':
         query_with_group_gid(gid)
+
+def query_with_user_uid(uid):
+    try:
+        dbconfig = read_db_config()
+        conn = MySQLConnection(**dbconfig)
+        cursor = conn.cursor()
+        cursor.execute('SELECT u.uid, u.id,(DECODE(u.password, "test12345678901234567890")),\
+                        up.fio, up.phone, up.comments, u.disable, u.deleted, d.tp_id,u.gid,\
+                        up.address_street, up.address_build, up.address_flat,\
+                        INET_NTOA(d.ip), INET_NTOA(d.netmask), d.cid,\
+                        d.logins,u.bill_id, b.deposit, u.registration, u.activate,\
+                        u.reduction, u.reduction_date,u.credit,u.credit_date,up.contract_id,\
+                        up.contract_date, up.pasport_num, up.pasport_date, up.pasport_grant,up._telbot, up._telbot_send,\
+                        up._vk, up._vk_send, u.expire, d.disable, u.company_id, up.email\
+                        FROM users u\
+                        LEFT JOIN users_pi up USING(uid)\
+                        LEFT JOIN dv_main d USING(uid) \
+                        LEFT JOIN bills b USING(uid) \
+                        WHERE u.uid=up.uid and u.uid={uid}\
+                        LIMIT 1;'.format(uid=str(uid)))
+        rows = cursor.fetchmany()
+        User = []
+        UserDict = dict(zip(['uid','login','password','fio','phone','descr','disable','delete','tarifs_id','groups_id'],rows[0][:10]))
+        User.append(UserDict)
+        UserAdrDict = dict(zip(['street', 'building', 'flat'],rows[0][10:13]))
+        User.append(UserAdrDict)
+        UserNetwDict = dict(zip(['ip','netmask','cid'],rows[0][13:16]))
+        User.append(UserNetwDict)
+
+        UserPIDict = dict(zip(['logins','bill_id','balance','registration','activate','reduction','reduction_date',\
+                               'credit','credit_date','contract_id','contract_date', 'pasport_num', 'pasport_date', 'pasport_grant',\
+                               'telegram','telegram_send','vk','vk_send','expire','status','company_id', 'email'], rows[0][16:]))
+        User.append(UserPIDict)
+
+    except Error as e:
+        print(e)
+
+    finally:
+        cursor.close()
+        conn.close()
+#        print('==User==*'*10)
+#        print(User)
+        return User
+
+    if __name__ == '__main__':
+        query_with_user_uid(uid)

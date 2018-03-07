@@ -5,7 +5,7 @@ from datetime import datetime
 import sys
 sys.path.insert(0, '/app/db')
 
-from mysql_select import query_with_allusers, query_with_user, query_with_users_uid, query_with_tarifs, query_with_tarif_tpid, query_with_groups, query_with_group_gid
+from mysql_select import query_with_allusers, query_with_user, query_with_users_uid, query_with_tarifs, query_with_tarif_tpid, query_with_groups, query_with_group_gid, query_with_user_uid
 import subprocess
 from models import Users, Address, Networks, Groups, Tarifs, UsersPI
 
@@ -22,6 +22,19 @@ def index():
 @users.route('/user/<uid>')
 def user(uid):
     ''' Выборка данных о пользователе по UID '''
+    def upd_user(*args):
+        user = args[1][0]
+        adr = args[1][1]
+        netw = args[1][2]
+        userpi =args[1][3]
+        db.session.query(Users).filter(Users.uid == args[0]).update(user)
+        db.session.query(Address).filter(Address.uid == args[0]).update(adr)
+        db.session.query(Networks).filter(Networks.uid == args[0]).update(netw)
+        db.session.query(UsersPI).filter(UsersPI.uid == args[0]).update(userpi)
+        db.session.commit()
+
+    ii = query_with_user_uid(uid)
+    upd_user(uid, ii)
     UserInfo =[ i for i in db.session.query(Users,Address,Networks,UsersPI,Tarifs,Groups)
                                             .filter(Users.uid == uid,
                                                 Address.uid == uid,
@@ -54,13 +67,13 @@ def addallusers():
 
     lgid = [ i[0] for i in db.session.query(Groups.gid) ]   # выборка gid из локальной базы PostgreSQL
     if lgid==[]:
-        gr0 = Groups(gid=99999, name='', descr='')              # группа 0
+        gr0 = Groups(gid=0, name='', descr='')              # группа 0
         db.session.add(gr0)
         db.session.commit()                                     # сохраняем в базу PostgreSQL
 
     g_id=[]
     for i in lgid:
-        if i == 99999:
+        if i == 0:
             i = 0
         else:
             g_id.append(i)
@@ -102,29 +115,24 @@ def addallusers():
         print(user)
 
         u.append(user)                              # для логирования и вывод в представление
- # создаем словарь с данными пользователя
-        if user.get('gid') == 0:
-            gid = 99999
-        else:
-            gid = user.get('gid')
 
         userdata = Users(uid=user.get('uid'),
                 login=user.get('login'),
                 password=user.get('password').decode('utf-8'),
                 fio=user.get('fio').upper(),
                 phone=user.get('phone'),
-                descr=user.get('comments'),
+                descr=user.get('descr'),
                 disable=user.get('disable'),
                 delete=user.get('deleted'),
-                tarifs_id=user.get('tp_id'),
-                groups_id=gid)
+                tarifs_id=user.get('tarifs_id'),
+                groups_id=user.get('groups_id'))
         db.session.add(userdata) # добаляем в базу PostgreSQL
 
         useraddr = Address(uid=user.get('uid'),
                 address=user.get('address'),
-                street=user.get('address_street').upper(),
-                building=user.get('address_build'),
-                flat=user.get('address_flat'))
+                street=user.get('street').upper(),
+                building=user.get('building'),
+                flat=user.get('flat'))
         db.session.add(useraddr) # добавляем в базу PostgreSQL
 
         usernet = Networks(uid=user.get('uid'),
@@ -136,6 +144,10 @@ def addallusers():
         userpi = UsersPI(uid=user.get('uid'),
               balance=user.get('deposit'),
               registration=user.get('registration'),
+              activate=user.get('activate'),
+              expire=user.get('expire'),
+              bill_id=user.get('bill_id'),
+              logins=user.get('logins'),
               reduction=user.get('reduction'),
               reduction_date=user.get('reduction_date'),
               credit=user.get('credit'),
@@ -146,10 +158,14 @@ def addallusers():
               contract_date=user.get('contract_date'),
               pasport_num=user.get('pasport_num'),
               pasport_date=user.get('pasport_date'),
-              telegram=user.get('_telbot'),
-              telegram_send=user.get('_telbot_send'),
-              vk=user.get('_vk'),
-              vk_send=user.get('_vk_send'))
+              telegram=user.get('telegram'),
+              telegram_send=user.get('telegram_send'),
+              vk=user.get('vk'),
+              vk_send=user.get('vk_send'),
+              status=user.get('disable'),
+              company_id=user.get('company_id'),
+              email=user.get('email'))
+
         db.session.add(userpi) # добавляем в базу PostgreSQL
 
     db.session.commit() # сохраняем в базу PostgreSQL

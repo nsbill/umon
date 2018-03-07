@@ -35,19 +35,20 @@ class Users(db.Model):
  #   tarifs_id = db.relationship('Tarifs', backref='tarifs', lazy='dynamic')
     users_pi = db.relationship('UsersPI', backref='userspi', lazy='dynamic')
 
-#    def __init__(self,uid,login,password,fio,phone,descr,disable,delete,address_id):
-#        self.uid = uid
-#        self.login = login
-#        self.password = password
-#        self.fio = fio
-#        self.phone = phone
-#        self.descr = descr
-#        self.disable = disable
-#        self.delete = delete
-#        self.address_id = address_id
-#
-#    def __repr__(self):
-#        return '<login: %r>' % (self.login)
+    def __init__(self,uid,login,password,fio,phone,descr,disable,delete,tarifs_id,groups_id):
+        self.uid = uid
+        self.login = login
+        self.password = password
+        self.fio = fio
+        self.phone = phone
+        self.descr = descr
+        self.disable = disable
+        self.delete = delete
+        self.tarifs_id = tarifs_id
+        self.groups_id = groups_id
+
+    def __repr__(self):
+        return '<UID: {}>,<Login: {}>,<Password: {}>,<FIO: {}>,<Phone:{}>'.format(self.uid, self.login, self.password, self.fio, self.phone )
 
 class Address(db.Model):
     __tablename__ = 'address'
@@ -98,8 +99,12 @@ class UsersPI(db.Model):
     __tablename__ = 'userspi'
     id = db.Column(db.Integer, primary_key=True)
     uid = db.Column('uid', db.Integer, db.ForeignKey('users.uid'), unique=True, nullable=False)
+    logins = db.Column('logins', db.Integer, default=0)
+    bill_id = db.Column('bill_id', db.Integer, unique=True, nullable=False)
     balance = db.Column('balance', db.Float)
     registration = db.Column('registration', db.Date, default='2000-01-01')
+    activate = db.Column('activate', db.Date, default='2000-01-01')
+    expire = db.Column('expire', db.Date, default='2001-01-01')
     reduction = db.Column('reduction', db.Float)
     reduction_date = db.Column('reduction_date', db.DateTime, default='2000-01-01')
     credit = db.Column('credit', db.Float)
@@ -109,9 +114,12 @@ class UsersPI(db.Model):
     contract_date = db.Column('contract_date', db.Date, default='2000-01-01')
     pasport_num = db.Column('pasport_num', db.String(25))
     pasport_date = db.Column('pasport_date', db.Date, default='2000-01-01')
-    telegram = db.Column(db.Integer, default=0)
-    telegram_send = db.Column(db.Integer,default=0)
-    vk = db.Column(db.Integer,default=0)
-    vk_send = db.Column(db.Integer,default=0)
-
+    pasport_grant = db.Column('pasport_grant', db.String(200))
+    telegram = db.Column('telegram', db.Integer, default=0)
+    telegram_send = db.Column('telegram_send', db.Integer,default=0)
+    vk = db.Column('vk', db.Integer,default=0)
+    vk_send = db.Column('vk_send', db.Integer,default=0)
+    status = db.Column('status', db.Integer)
+    company_id = db.Column('company_id', db.Integer)
+    email = db.Column('email', db.String(100))
 
