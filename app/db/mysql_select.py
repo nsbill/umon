@@ -112,46 +112,48 @@ def update_with_user(uid): # uid = userUID
         update_with_user(uid)
 
 def query_with_allusers():
-    try:
-        dbconfig = read_db_config()
-        conn = MySQLConnection(**dbconfig)
-        cursor = conn.cursor()
-        cursor.execute('SELECT u.id, u.uid, DATE_FORMAT(u.activate, "%Y-%m-%d"),\
-                        DATE_FORMAT(u.expire, "%Y-%m%-%d"), u.credit, u.reduction,\
-                        DATE_FORMAT(u.reduction_date, "%Y-%m-%d"),\
-                        DATE_FORMAT(u.registration, "%Y-%m-%d"),\
-                        (DECODE(u.password, "test12345678901234567890")),u.gid,u.disable,u.company_id,u.bill_id,\
-                        DATE_FORMAT(u.credit_date, "%Y-%m-%d"), u.deleted,\
-                        up.fio, up.phone, up.email, up.address_street, up.address_build, up.address_flat, up.comments,\
-                        up.contract_id, up.contract_date, up.pasport_num, up.pasport_date, up.pasport_grant,up._telbot,up._telbot_send,\
-                        up._vk,up._vk_send, d.tp_id, d.logins, INET_NTOA(d.ip), INET_NTOA(d.netmask), d.cid, d.disable, b.deposit\
-                        FROM users u \
-                        LEFT JOIN users_pi up USING(uid)\
-                        LEFT JOIN dv_main d USING(uid) \
-                        LEFT JOIN bills b USING(uid) \
-                        WHERE u.uid=up.uid\
-                        LIMIT 10;')
-        all = {}
-        a = []
-        for row in iter_row(cursor, 10):
-#            print(row)
-            UidDepositDict = dict(zip(['login','uid','activate','expire','credit','reduction','reduction_date','registration','password','gid','disable',\
-                                        'company_id','bill_id','credit_date','deleted','fio','phone', 'email',\
-                                        'street', 'build', 'flat', 'descr',\
-                                        'contract_id', 'contract_date', 'pasport_num', 'pasport_date', 'pasport_grant',\
-                                        'telegram','teleram_send','vk','vk_send','tpid', 'logins','ip','netmask','cid', 'status','deposit' ], row)) 
-            all = a.append(UidDepositDict)
-
-    except Error as e:
-        print(e)
-
-    finally:
-        cursor.close()
-        conn.close()
-        return a
-
-    if __name__ == '__main__':
-        query_with_allusers()
+    pass
+#def query_with_allusers():
+#    try:
+#        dbconfig = read_db_config()
+#        conn = MySQLConnection(**dbconfig)
+#        cursor = conn.cursor()
+#        cursor.execute('SELECT u.id, u.uid, DATE_FORMAT(u.activate, "%Y-%m-%d"),\
+#                        DATE_FORMAT(u.expire, "%Y-%m%-%d"), u.credit, u.reduction,\
+#                        DATE_FORMAT(u.reduction_date, "%Y-%m-%d"),\
+#                        DATE_FORMAT(u.registration, "%Y-%m-%d"),\
+#                        (DECODE(u.password, "test12345678901234567890")),u.gid,u.disable,u.company_id,u.bill_id,\
+#                        DATE_FORMAT(u.credit_date, "%Y-%m-%d"), u.deleted,\
+#                        up.fio, up.phone, up.email, up.address_street, up.address_build, up.address_flat, up.comments,\
+#                        up.contract_id, up.contract_date, up.pasport_num, up.pasport_date, up.pasport_grant,up._telbot,up._telbot_send,\
+#                        up._vk,up._vk_send, d.tp_id, d.logins, INET_NTOA(d.ip), INET_NTOA(d.netmask), d.cid, d.disable, b.deposit\
+#                        FROM users u \
+#                        LEFT JOIN users_pi up USING(uid)\
+#                        LEFT JOIN dv_main d USING(uid) \
+#                        LEFT JOIN bills b USING(uid) \
+#                        WHERE u.uid=up.uid\
+#                        LIMIT 10000;')
+#        all = {}
+#        a = []
+#        for row in iter_row(cursor, 10):
+##            print(row)
+#            UidDepositDict = dict(zip(['login','uid','activate','expire','credit','reduction','reduction_date','registration','password','gid','disable',\
+#                                        'company_id','bill_id','credit_date','deleted','fio','phone', 'email',\
+#                                        'street', 'build', 'flat', 'descr',\
+#                                        'contract_id', 'contract_date', 'pasport_num', 'pasport_date', 'pasport_grant',\
+#                                        'telegram','teleram_send','vk','vk_send','tpid', 'logins','ip','netmask','cid', 'status','deposit' ], row)) 
+#            all = a.append(UidDepositDict)
+#
+#    except Error as e:
+#        print(e)
+#
+#    finally:
+#        cursor.close()
+#        conn.close()
+#        return a
+#
+#    if __name__ == '__main__':
+#        query_with_allusers()
 
 
 def query_with_user(uid):
@@ -178,7 +180,7 @@ def query_with_user(uid):
 
         for row in iter_row(cursor, 10):
 #            print(row)
-            UidDepositDict = dict(zip(['login','uid','activate','expire','credit','reduction','reduction_date','registration','password','gid','disable',\
+            UidDepositDict = dict(zip(['login','uid','activate','expire','credit','reduction','reduction_date','registration','password','groups_id','disable',\
                                         'company_id','bill_id','credit_date','deleted','fio','phone', 'email',\
                                         'street', 'building', 'flat', 'descr',\
                                         'contract_id', 'contract_date', 'pasport_num', 'pasport_date', 'pasport_grant',\
@@ -202,7 +204,7 @@ def query_with_users_uid():
         dbconfig = read_db_config()
         conn = MySQLConnection(**dbconfig)
         cursor = conn.cursor()
-        cursor.execute('SELECT u.uid FROM users u LIMIT 20');
+        cursor.execute('SELECT u.uid FROM users u LIMIT 10000');
 
         all = {}
         a = []
@@ -218,7 +220,7 @@ def query_with_users_uid():
         cursor.close()
         conn.close()
         return a
-
+ 
     if __name__ == '__main__':
         query_with_users_uid()
 
@@ -284,8 +286,8 @@ def query_with_groups():
         all = {}
         a = []
         for row in iter_row(cursor, 10):
-            print('=GROUP_ID=*'*10)
-            print(row)
+#            print('=GROUP_ID=*'*10)
+#            print(row)
             UidDepositDict = dict(zip(['gid','name', 'descr' ], row)) 
             all = a.append(UidDepositDict)
 
@@ -328,6 +330,7 @@ def query_with_group_gid(gid):
         query_with_group_gid(gid)
 
 def query_with_user_uid(uid):
+    ''' Обновление данных пользователя в локальной базе '''
     try:
         dbconfig = read_db_config()
         conn = MySQLConnection(**dbconfig)
@@ -347,17 +350,23 @@ def query_with_user_uid(uid):
                         WHERE u.uid=up.uid and u.uid={uid}\
                         LIMIT 1;'.format(uid=str(uid)))
         rows = cursor.fetchmany()
-        User = []
-        UserDict = dict(zip(['uid','login','password','fio','phone','descr','disable','delete','tarifs_id','groups_id'],rows[0][:10]))
+        item = []
+        for i in rows[0]:                            # Декодируем в UTF8 bytearray
+            if type(i) == bytearray:
+                item.append(i.decode('utf-8'))
+            else:
+                item.append(i)
+        User = []  # создаем список и добавлям словари UserDict, UserAdrDict, UserNetwDict, UserPIDict
+        UserDict = dict(zip(['uid','login','password','fio','phone','descr','disable','delete','tarifs_id','groups_id'],item[:10]))
         User.append(UserDict)
-        UserAdrDict = dict(zip(['street', 'building', 'flat'],rows[0][10:13]))
+        UserAdrDict = dict(zip(['street', 'building', 'flat'],item[10:13]))
         User.append(UserAdrDict)
-        UserNetwDict = dict(zip(['ip','netmask','cid'],rows[0][13:16]))
+        UserNetwDict = dict(zip(['ip','netmask','cid'],item[13:16]))
         User.append(UserNetwDict)
 
         UserPIDict = dict(zip(['logins','bill_id','balance','registration','activate','reduction','reduction_date',\
                                'credit','credit_date','contract_id','contract_date', 'pasport_num', 'pasport_date', 'pasport_grant',\
-                               'telegram','telegram_send','vk','vk_send','expire','status','company_id', 'email'], rows[0][16:]))
+                               'telegram','telegram_send','vk','vk_send','expire','status','company_id', 'email'],item[16:]))
         User.append(UserPIDict)
 
     except Error as e:
@@ -366,9 +375,36 @@ def query_with_user_uid(uid):
     finally:
         cursor.close()
         conn.close()
-#        print('==User==*'*10)
-#        print(User)
         return User
 
     if __name__ == '__main__':
         query_with_user_uid(uid)
+
+def query_with_dv_calls():
+    ''' Выборка пользователей Online '''
+    try:
+        dbconfig = read_db_config()
+        conn = MySQLConnection(**dbconfig)
+        cursor = conn.cursor()
+        cursor.execute('SELECT dv.status,dv.user_name,dv.started,dv.acct_session_id,\
+                        dv.acct_session_time,dv.acct_input_octets,dv.acct_output_octets,\
+                        dv.framed_ip_address,dv.lupdated,dv.CID,dv.CONNECT_INFO,dv.tp_id,\
+                        dv.nas_id,dv.uid,dv.guest\
+                        FROM dv_calls dv LIMIT 10000;')
+        all = {}
+        dv = []
+        for row in iter_row(cursor, 10):
+           DvCallsDict = dict(zip(['status','username','started','acct_session_id','acct_session_time',\
+                            'acct_input_octets','acct_output_octets','framed_ip_address','lupdated',\
+                            'cid','connect_info','tpid','nas_id','uid','guest'],row))
+           all = dv.append(DvCallsDict)
+    except Error as e:
+        print(e)
+
+    finally:
+        cursor.close()
+        conn.close()
+        return dv
+
+    if __name__ == '__main__':
+        query_with_dv_calls()

@@ -87,7 +87,7 @@ class Groups(db.Model):
 class Tarifs(db.Model):
     __tablename__ = 'tarifs'
     id = db.Column(db.Integer, primary_key=True)
-#    uid = db.Column('uid', db.Integer, db.ForeignKey('users.uid'), unique=True, nullable=False)
+#    uid = db.Column('uid', db.Integer, db.ForeignKey('users.uid'), unique=True, Gnullable=False)
     tpid = db.Column('tpid', db.Integer, unique=True, nullable=False)
     name = db.Column('name', db.String(100))
     day_fee = db.Column('day_fee', db.Float)
@@ -123,3 +123,21 @@ class UsersPI(db.Model):
     company_id = db.Column('company_id', db.Integer)
     email = db.Column('email', db.String(100))
 
+class DvCalls(db.Model):
+    __tablename__= 'dv_calls'
+    id = db.Column(db.BigInteger, primary_key=True)
+    status = db.Column('status', db.Integer)
+    username = db.Column('username',db.String(32))
+    started = db.Column('started', db.DateTime)
+    acct_session_id = db.Column('acct_session_id', db.String(32))
+    acct_session_time = db.Column('acct_session_time', db.Integer)
+    acct_input_octets = db.Column('acct_input_octets', db.BigInteger)
+    acct_output_octets = db.Column('acct_output_octets', db.BigInteger)
+    framed_ip_address = db.Column('framed_ip_address', postgresql.INET)
+    lupdated = db.Column('lupdated', db.Integer)
+    cid = db.Column('cid', db.String(17))
+    connect_info = db.Column('connect_info', db.String(35))
+    tpid = db.Column('tpid', db.Integer)
+    nas_id = db.Column('nas_id',db.Integer)
+    uid = db.Column('uid', db.Integer)
+    guest = db.Column('guest', db.Integer)
