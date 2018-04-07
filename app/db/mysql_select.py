@@ -24,7 +24,7 @@ def query_with_bills():
         all = {}
         a = []
         for row in iter_row(cursor, 10):
-            print(row)
+#            print(row)
             UidDepositDict = dict(zip(['uid', 'deposit'], row)) 
             all = a.append(UidDepositDict)
     except Error as e:
@@ -99,7 +99,7 @@ def update_with_user(uid): # uid = userUID
         all = {}
         for row in iter_row(cursor, 10):
             all = row
-            print(all)
+#            print(all)
         return all
     except Error as e:
         print(e)

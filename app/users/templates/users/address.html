@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Adress of Umon
+{% endblock %}
+
+{% block content_titel %}
+  Adress info of UMon
+{% endblock %}
+
+{% block content %}
+  <div class="grid-x grid-padding-x">
+    <div class="cell small-2 medium-4 large-4"></div>
+    <div class="cell small-10 medium-8 large-4">
+    Адреса 
+    </div>
+    <div class="cell small-2"></div>
+    <div class="cell small-10 medium-8 large-4">
+      <h6>Время обновления: {{ DateTime }}</h6>
+    </div>
+  </div>
+  <div class="grid-container">
+  <div class=row>
+    <div class="cell small-10 medium-8 large-4">
+      Улицы
+    </div>
+    <div class="cell small-12 medium-4 large-4">
+       {{ AddItemStreet }}
+    </div>
+    <div class="cell small-10 medium-8 large-4">
+      Дома
+    </div>
+    <div class="cell small-12 medium-4 large-4">
+       {{ AddItemBuild }}
+    </div>
+    <div class="cell small-10 medium-8 large-4">
+      Квартиры
+    </div>
+    <div class="cell small-12 medium-4 large-4">
+       {{ AddItemFlat }}
+    </div>
+  </div>
+{% endblock %}

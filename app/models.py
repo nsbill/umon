@@ -50,6 +50,7 @@ class Users(db.Model):
     def __repr__(self):
         return '<UID: {}>,<Login: {}>,<Password: {}>,<FIO: {}>,<Phone:{}>'.format(self.uid, self.login, self.password, self.fio, self.phone )
 
+
 class Address(db.Model):
     __tablename__ = 'address'
     id = db.Column(db.Integer, primary_key=True)
@@ -66,7 +67,41 @@ class Address(db.Model):
         self.building = building
         self.flat = flat
     def __repr__(self):
-        return 'uid: %r>' % (self.uid)
+        return 'uid: {},street: {},build: {},flat: {}'.format(self.uid, self.street, self.building,self.flat)
+
+class SelectAdressUid(db.Model):
+    __tablename__='adr_uid'
+    id = db.Column(db.Integer, primary_key=True)
+    uid = db.Column(db.Integer, db.ForeignKey('users.uid'), unique=True, nullable=False)
+    street_id = db.Column(db.Integer, db.ForeignKey('sortstreet.street_id'))
+    build_id = db.Column(db.Integer, db.ForeignKey('sortbuild.build_id'))
+    flat_id = db.Column(db.Integer, db.ForeignKey('sortflat.flat_id'))
+
+street_build = db.Table('street_build',
+        db.Column('street_id', db.Integer, db.ForeignKey('sortstreet.street_id')),
+        db.Column('build_id', db.Integer, db.ForeignKey('sortbuild.build_id'))
+        )
+
+class SortStreet(db.Model):
+    __tablename__='sortstreet'
+    street_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32))
+    building = db.relationship('SortBuild', secondary=street_build, backref=db.backref('streetbuild', lazy = 'dynamic'))
+
+build_flat = db.Table('build_flat',
+        db.Column('build_id', db.Integer, db.ForeignKey('sortbuild.build_id')),
+        db.Column('flat_id', db.Integer, db.ForeignKey('sortflat.flat_id'))
+        )
+class SortBuild(db.Model):
+    __tablename__='sortbuild'
+    build_id = db.Column(db.Integer, primary_key=True)
+    number_build = db.Column(db.String(10))
+    flat = db.relationship('SortFlat', secondary=build_flat, backref=db.backref('buildflat', lazy = 'dynamic'))
+
+class SortFlat(db.Model):
+    __tablename__='sortflat'
+    flat_id = db.Column(db.Integer, primary_key=True)
+    number_flat = db.Column(db.String(10))
 
 class Networks(db.Model):
     __tablename__ = 'networks'
