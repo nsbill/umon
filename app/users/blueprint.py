@@ -46,6 +46,47 @@ def user(uid):
                                                 Groups.gid == Users.groups_id).first()]
     return render_template('users/userinfo.html', UserInfo=UserInfo, DateTime=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
+@users.route('/adr/search')
+def search():
+    '''Поиск''' 
+    def allstreet():
+        '''Выборка улиц, сортировка и вывод в список [заглавная буква, улица, street_id]'''
+        all_st = SortStreet.query.all()
+        allstreet = [ (street.name,street.street_id) for street in all_st] #  
+        street = [ (i[0][0],i[0],i[1]) for i in allstreet if i[0] != '' ]
+        street.sort()
+        return street
+
+    def street_letters(add = None):
+        '''Функция для сортировки улиц по заглавной букве с выдовом в словарь'''
+        street_letters = {}
+        litters = [ i[0] for i in add ] # выборка заглавных букв
+        litters = list(set(litters))    # удаляем дубликаты и создваем список
+        litters.sort()                  # сортировка списка
+        for item in add:                # создание словаря улиц по каждой заглавной букве улицы
+            for i in litters:
+                if item[0] == i:
+                    street_letters.setdefault(item[0],[]).append((item[1],item[2]))
+        return street_letters
+
+    def allbuild():
+        allbuild = SortBuild.query.all()
+        return allbuild
+
+    def allflat():
+        allflat = SortFlat.query.all()
+        return allflat
+
+    search = allstreet()                # получаем список всех улиц
+    list_street_letters = street_letters(add=search)  # получаем словарь улиц
+    return render_template('users/search.html', ListSearch=search, ListStreetLetters=list_street_letters.items(), DateTime=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+@users.route('/adr/street_id/<street_id>')
+def street_id_users(street_id):
+    street_id_users = SelectAdressUid.query.filter_by(street_id=street_id).all()
+    return render_template('users/street_users.html', StreetUsers=street_id_users)
+
+
 @users.route('/adr/sortadr')
 def sort_adr():
     def select_address():
