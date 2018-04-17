@@ -20,33 +20,36 @@
       <label>Выберите улицу:
          <select>
           {% for i in ListSearch %}
-               <option value="{{ i[0] }}">{{ i[1] }}</option>
+            <option value="{{ i[2] }}">{{ i[1] }}</option>
           {% endfor %}
          </select>
-       </label>
+        </label>  
+        <div class="input-group-button">
+          <input type="submit" class="button" value="OK">
+        </div>
      </div>
    </div>
   <div class="cell medium-8 large-9">
-      <ul class="dropdown menu" data-dropdown-menu>
-        {% for i in ListStreetLetters %}
+    <ul class="dropdown menu" data-dropdown-menu>
+      {% for i in ListStreetLetters %}
         <li>
           <a href="#">{{ i[0] }}</a>
           <ul class="menu">
             <li>
-                {% for street in i[1] %}
-                <a href="street_id/{{street[1]}}">
-                    {{ street[0] }}
-                  </a>
-                {% endfor %}
+              {% for street in i[1] %}
+                <a href="/users/adr/street_id/{{street[1]}}">
+                  {{ street[0] }}
+                </a>
+              {% endfor %}
             </li>
           </ul>
-          </li>
-          {% endfor %}
-        </ul>
+        </li>
+      {% endfor %}
+    </ul>
+    {% block street_users %}{% endblock %}
     </div>
   </div>
 </div>
 <div>
-  {% block street_users %}{% endblock %}
 </div>
 {% endblock %}

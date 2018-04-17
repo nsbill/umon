@@ -46,9 +46,8 @@ def user(uid):
                                                 Groups.gid == Users.groups_id).first()]
     return render_template('users/userinfo.html', UserInfo=UserInfo, DateTime=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
-@users.route('/adr/search')
-def search():
-    '''Поиск''' 
+def search(func):
+    '''Поиск'''
     def allstreet():
         '''Выборка улиц, сортировка и вывод в список [заглавная буква, улица, street_id]'''
         all_st = SortStreet.query.all()
@@ -77,15 +76,37 @@ def search():
         allflat = SortFlat.query.all()
         return allflat
 
-    search = allstreet()                # получаем список всех улиц
-    list_street_letters = street_letters(add=search)  # получаем словарь улиц
-    return render_template('users/search.html', ListSearch=search, ListStreetLetters=list_street_letters.items(), DateTime=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    all_street = allstreet()                # получаем список всех улиц
+    list_street_letters = street_letters(add=all_street)  # получаем словарь улиц
+    return all_street, list_street_letters
 
+@search
+@users.route('/adr/search')
+def search_street():
+    def list_street():
+        street = search(list_street)
+        return street
+    liststreet = list_street()      # Список улиц
+    list_streetletters = liststreet[1]  # Осортированный словарь улиц по заглавной букве 
+    return render_template('users/search.html', ListSearch=liststreet[0], ListStreetLetters=list_streetletters.items(), DateTime=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+@search
 @users.route('/adr/street_id/<street_id>')
 def street_id_users(street_id):
+    def list_street():
+        street = search(list_street)
+        return street
+    liststreet = list_street()      # Список улиц
+    list_streetletters = liststreet[1]  # Осортированный словарь улиц по заглавной букве 
     street_id_users = SelectAdressUid.query.filter_by(street_id=street_id).all()
-    return render_template('users/street_users.html', StreetUsers=street_id_users)
+    list_users_uid = [ i.uid for i in street_id_users ]
 
+    def user(uid):
+        user = Users.query.filter_by(uid=uid).first()
+        return user
+
+    users = [ user(uid=uid) for uid in list_users_uid ]
+    return render_template('users/street_users.html', StreetUsers=street_id_users, ListSearch=liststreet[0], ListStreetLetters=list_streetletters.items(), Users=users)
 
 @users.route('/adr/sortadr')
 def sort_adr():

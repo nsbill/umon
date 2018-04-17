@@ -35,20 +35,20 @@ class Users(db.Model):
  #   tarifs_id = db.relationship('Tarifs', backref='tarifs', lazy='dynamic')
     users_pi = db.relationship('UsersPI', backref='userspi', lazy='dynamic')
 
-    def __init__(self,uid,login,password,fio,phone,descr,disable,delete,tarifs_id,groups_id):
-        self.uid = uid
-        self.login = login
-        self.password = password
-        self.fio = fio
-        self.phone = phone
-        self.descr = descr
-        self.disable = disable
-        self.delete = delete
-        self.tarifs_id = tarifs_id
-        self.groups_id = groups_id
-
-    def __repr__(self):
-        return '<UID: {}>,<Login: {}>,<Password: {}>,<FIO: {}>,<Phone:{}>'.format(self.uid, self.login, self.password, self.fio, self.phone )
+#    def __init__(self,uid,login,password,fio,phone,descr,disable,delete,tarifs_id,groups_id):
+#        self.uid = uid
+#        self.login = login
+#        self.password = password
+#        self.fio = fio
+#        self.phone = phone
+#        self.descr = descr
+#        self.disable = disable
+#        self.delete = delete
+#        self.tarifs_id = tarifs_id
+#        self.groups_id = groups_id
+#
+#    def __repr__(self):
+#        return "'UID': '{}', 'Login': '{}', 'Password': '{}', 'FIO': '{}', 'Phone':'{}', 'Disable':'{}'".format(self.uid, self.login, self.password, self.fio, self.phone, self.disable )
 
 
 class Address(db.Model):
@@ -60,14 +60,14 @@ class Address(db.Model):
     building = db.Column(db.String(10),default='')
     flat = db.Column(db.String(10),default='')
 
-    def __init__(self,uid,address,street,building,flat):
-        self.uid = uid
-        self.address = address
-        self.street = street
-        self.building = building
-        self.flat = flat
-    def __repr__(self):
-        return 'uid: {},street: {},build: {},flat: {}'.format(self.uid, self.street, self.building,self.flat)
+#    def __init__(self,uid,address,street,building,flat):
+#        self.uid = uid
+#        self.address = address
+#        self.street = street
+#        self.building = building
+#        self.flat = flat
+#    def __repr__(self):
+#        return 'uid: {},street: {},build: {},flat: {}'.format(self.uid, self.street, self.building,self.flat)
 
 class SelectAdressUid(db.Model):
     __tablename__='adr_uid'

@@ -2,9 +2,41 @@
 {% block title %}
  Search users of streets 
 {% endblock %}
-
 <div>
-{% block street_users %}
-  {{ StreetUsers }}
+  {% block street_users %}
+    <table>
+      <thead>
+        <tr>
+          <th width="20">UID</th>
+          <th>Логин</th>
+          <th>ФИО</th>
+          <th>Баланс</th>
+          <th>Кредит</th>
+          <th>Телефон</th>
+          <th>Улица</th>
+          <th>Дом</th>
+          <th>Кв</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in Users %}
+          <tr>
+             <td><a href="/users/user/{{ user.uid }}">{{ user.uid }}</a></td>
+             <td>{{ user.login }}</td>
+             <td>{{ user.fio }}</td>
+            {% for i in user.users_pi %}
+             <td>{{ i.balance }}</td>
+             <td>{{ i.credit }}</td>
+            {% endfor %}
+             <td>{{ user.phone }}</td>
+            {% for i in user.address_id %}
+             <td>{{ i.street }}</td>
+             <td>{{ i.building }}</td>
+             <td>{{ i.flat }}</td>
+            {% endfor %}
+          </tr>
+         {% endfor %}
+      </tbody>
+    </table>
 {% endblock %}
 </div>
