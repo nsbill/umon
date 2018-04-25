@@ -95,13 +95,15 @@ build_flat = db.Table('build_flat',
 class SortBuild(db.Model):
     __tablename__='sortbuild'
     build_id = db.Column(db.Integer, primary_key=True)
-    number_build = db.Column(db.String(10))
+    number_build = db.Column(db.Integer)
+    pref_build = db.Column(db.String(10))
     flat = db.relationship('SortFlat', secondary=build_flat, backref=db.backref('buildflat', lazy = 'dynamic'))
 
 class SortFlat(db.Model):
     __tablename__='sortflat'
     flat_id = db.Column(db.Integer, primary_key=True)
-    number_flat = db.Column(db.String(10))
+    number_flat = db.Column(db.Integer)
+    pref_flat = db.Column(db.String(10))
 
 class Networks(db.Model):
     __tablename__ = 'networks'

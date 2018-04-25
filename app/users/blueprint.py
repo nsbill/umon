@@ -57,7 +57,7 @@ def search(func):
         return street
 
     def street_letters(add = None):
-        '''Функция для сортировки улиц по заглавной букве с выдовом в словарь'''
+        '''Функция для сортировки улиц по заглавной букве с выводом в словарь'''
         street_letters = {}
         litters = [ i[0] for i in add ] # выборка заглавных букв
         litters = list(set(litters))    # удаляем дубликаты и создваем список
@@ -106,10 +106,70 @@ def street_id_users(street_id):
         return user
 
     users = [ user(uid=uid) for uid in list_users_uid ]
-    return render_template('users/street_users.html', StreetUsers=street_id_users, ListSearch=liststreet[0], ListStreetLetters=list_streetletters.items(), Users=users)
+    print('--users--'*10)
+    user = users[0]
+    users_info = [ (user.login,user.fio,user.phone,
+                   [(i.balance, i.credit) for i in user.users_pi],
+                   [(i.street, i.building, i.flat) for i in user.address_id],) for user in users ]
+
+    def sort_users_info_street(user):
+        return user[4][0][1]
+#    dict(zip(('login','fio','phone','balance','credit','street','building','flat'),
+    users_info.sort(key=sort_users_info_street)
+    print(users_info)
+
+    def selection_sort(ar):
+        length = len(ar)
+        for i in range(length):
+            x = i
+            for z in range(x + 1, length):
+                if ar[x] > ar[z]:
+                    x = z
+            ar[i], ar[x] = ar[x], ar[i]
+        return ar
+
+#    sorted(users.items(), key=lambda item: item[1]) # Упорядочим элементы словаря по значениям.
+#    s = [ i for i in users ]
+#    print('s'*10)
+#    print(s)
+    str_sort_num = [ number_build[4][0][1] for number_build in users_info ]
+    print(str_sort_num)
+    users_info = selection_sort(str_sort_num)
+#    users_info = [selection_sort(i) for i in str_sort_num]
+    return render_template('users/street_users.html', UserInfo=users_info, StreetUsers=street_id_users, ListSearch=liststreet[0], ListStreetLetters=list_streetletters.items(), Users=users)
+
 
 @users.route('/adr/sortadr')
 def sort_adr():
+    def input_num(sort_num=None):
+        '''Отделить тип int и str в номере дома или квартиры
+           Пример: '100a' >>>  (100,'a')
+        '''
+        print('---=main=---'*7)
+        print(sort_num)
+        if sort_num is not None:
+            if sort_num[0] != '':
+                s = 0
+                sort_build_num = []
+                try:
+                  for i in sort_num[0]:
+                      int(i)
+                      s = s + 1
+                      print('---sort_num---'*7)
+                      print(sort_num)
+                  return (sort_num[0],'',)
+                except ValueError:
+                  sort_build_num.append((sort_num[0][:s], sort_num[0][s:]))
+                  print('---sort_build_num---'*7)
+                  print(sort_build_num)
+                  if sort_build_num[0][0] == '':
+                    return (0, sort_build_num[0][1])
+                  return sort_build_num[0]
+        isnot = (0, sort_num)
+        print('--isnot--'*8)
+        print(isnot)
+        return isnot
+
     def select_address():
         '''Выборка ул, дом, кв из таб. Address и добавление в таб. SortStreet, SortBuild, SortFlat
             - стравниваем списки и удаляем дубликаты
@@ -129,21 +189,23 @@ def sort_adr():
     def add_adr(list_street=None, list_build=None, list_flat=None):
         '''Добавление ул дом кв в таб. SortStreet, SortBuild, SortFlat '''
         if list_street is not None:
-            for i in list_street:                                                                  # Добавляем не сущ. улицу
+            for i in list_street:                                                    # Добавляем не сущ. улицу
                 db.session.close()
                 db.session.add(SortStreet(name=i[0]))
                 db.session.commit()
 
         if list_build is not None:
-            for i in list_build:                                                                  # Добавляем не сущ. дом
+            for i in list_build:                                                     # Добавляем не сущ. дом
                 db.session.close()
-                db.session.add(SortBuild(number_build=i[0]))
+                build = input_num(i)
+                db.session.add(SortBuild(number_build=build[0],pref_build=build[1]))
                 db.session.commit()
 
         if list_flat is not None:
-            for i in list_flat:                                                                  # Добавляем не сущ. кв. 
+            for i in list_flat:                                                      # Добавляем не сущ. кв. 
                 db.session.close()
-                db.session.add(SortFlat(number_flat=i[0]))
+                flat = input_num(i)
+                db.session.add(SortFlat(number_flat=flat[0],pref_flat=flat[1]))
                 db.session.commit()
 
     def select_adress_all():
@@ -158,7 +220,6 @@ def sort_adr():
         adr_all = SelectAdressUid.query.all()
         list_adr_all = set([(i.uid,i.street_id,i.build_id,i.flat_id) for i in adr_all])
         uid = [i[0] for i in list_adr_all]  # Выборка UID
-
         return list_adr_all, uid
 
     def select_address_uid(uid=None):
@@ -167,9 +228,32 @@ def sort_adr():
         if uid is not None:
             a = Address.query.filter_by(uid=uid).all()
             ab = [ (i.uid, i.street, i.building, i.flat) for i in a ]
+            print('--==ab==---'*7)
+            print(ab)
             st = db.session.query(SortStreet).filter(SortStreet.name == ab[0][1]).first()
-            bt = db.session.query(SortBuild).filter(SortBuild.number_build == ab[0][2]).first()
-            ft = db.session.query(SortFlat).filter(SortFlat.number_flat == ab[0][3]).first()
+            build_num = input_num([ab[0][2]])
+            flat_num = input_num([ab[0][3]])
+            print(build_num)
+            test = db.session.query(SortBuild).filter(SortBuild.number_build == build_num[0]).filter(SortBuild.pref_build == build_num[1]).first()
+            print('==test=='*7)
+            print(test)
+            ftest = db.session.query(SortFlat).filter(SortFlat.number_flat == flat_num[0]).filter(SortFlat.pref_flat == flat_num[1]).first()
+            print('==ftest=='*7)
+            print(ftest)
+            if build_num[0]:
+                bt = db.session.query(SortBuild).filter(SortBuild.number_build == build_num[0]).filter(SortBuild.pref_build == build_num[1]).first()
+            else:
+                bt = db.session.query(SortBuild).filter(SortBuild.number_build == 0).filter(SortBuild.pref_build == build_num[1]).first()
+
+            if flat_num[0]:
+                ft = db.session.query(SortFlat).filter(SortFlat.number_flat == flat_num[0]).filter(SortFlat.pref_flat == flat_num[1]).first()
+            else:
+                ft = db.session.query(SortFlat).filter(SortFlat.number_flat == 0).filter(SortFlat.pref_flat == flat_num[1]).first()
+
+            print('=bt='*8)
+            print(bt)
+            print('=ft='*8)
+            print(ft)
         return st, bt, ft
 
     def add_adr_uid(st,bt,ft,uid=None):
@@ -186,9 +270,14 @@ def sort_adr():
             db.session.close()
             for i in uid:
                 adruid = select_address_uid(uid=i)
+                print('-=adruid=-'*7)
+                print(adruid)
                 street = adruid[0]
+                print(street)
                 build = adruid[1]
+                print(build)
                 flat = adruid[2]
+                print(flat)
 
                 add_adr_uid(st=street,bt=build,ft=flat,uid=i)            # добавляем в таб adr_uid 
 
@@ -206,8 +295,14 @@ def sort_adr():
     add_adr(list_street=sort[0],list_build=sort[1],list_flat=sort[2]) # доваление новых адресов
 
     saa1 = select_adress_all()
+    print('---saa1==='*7)
+    print(saa1)
     saa2 = select_adr_all()
+    print('---saa2==='*7)
+    print(saa2)
     diff = set(saa1[1]) - set(saa2[1]) # сравнения и поиск новых учетных записей по UID
+    print('-==diff==-'*7)
+    print(diff)
     adr_mtm(uid=tuple(diff))
     return render_template('users/address.html', AddItemStreet=sort[0], AddItemBuild=sort[1], AddItemFlat=sort[2], DateTime=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
@@ -252,11 +347,11 @@ def addusers():
         db.session.close()                                      # закрыть существующие сессии
         user = query_with_user_uid(uid=i)                       # выборка пользователя их базы Abills по uid
         db.session.bulk_insert_mappings(Users,[user[0]])        # создание сесси для добавления в PostgreSQL
-        user[1].update(uid=i)                                   # выборка адрес пользователя из базы Abills
+        user[1].update(uid=i)                                   # обновление адрес пользователя из базы Abills
         db.session.bulk_insert_mappings(Address,[user[1]])
-        user[2].update(uid=i)                                   # выборка сетевые настройки польз. из базы Abills
+        user[2].update(uid=i)                                   # обновление сетевые настройки польз. из базы Abills
         db.session.bulk_insert_mappings(Networks,[user[2]])
-        user[3].update(uid=i)                                   # выборка информац о пользателе из базы Abills
+        user[3].update(uid=i)                                   # обновление информац о пользателе из базы Abills
         db.session.bulk_insert_mappings(UsersPI,[user[3]])
         db.session.commit()                                     # записать выбранные данные в базу PostgreSQL
     return render_template('users/addusers.html',Tarifs='Все тарифы добавлены',Groups='Все группы добавлены',Users='Все пользователи добавлены')

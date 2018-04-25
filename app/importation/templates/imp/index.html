@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}
+   Importation from UMon
+{% endblock %}
+
+{% block content_titel %}
+   Importation with Abills
+{% endblock %}
+
+{% block content %}
+	  <div class="row">
+			<div class="grid-container">
+        <div class="grid-x grid-padding-x align-center"">
+						<div class="medium-8 cell">
+              Users all
+								<div class="col-sm-6">
+										<table class="table table-hover" style="font-size: 12px">
+                      <tr>
+                          {{ import_data }}
+  										</tr>
+										</thead>
+                    <tbody>
+                        <tr>
+                          <td><b>{{  import_data }}</b></td>
+                        </tr>
+										</tbody>
+										</table>
+								</div>
+            </div>
+				</div>
+			</div>
+		</div>
+{% endblock %}
