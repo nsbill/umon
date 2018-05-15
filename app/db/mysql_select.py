@@ -72,8 +72,8 @@ def query_with_negbalance_users():
         all = {}
         a = []
         for row in iter_row(cursor, 10):
-            UidDepositDict = dict(zip(['uid','tp_id','status','connect_info','nas_id','framed_ip_address', 'deposit', 'day_fee', 'credit', 'guest'], row)) 
-            all = a.append(UidDepositDict)
+            Dict = dict(zip(['uid','tp_id','status','connect_info','nas_id','framed_ip_address', 'deposit', 'day_fee', 'credit', 'guest'], row)) 
+            all = a.append(Dict)
     except Error as e:
         print(e)
 
@@ -137,12 +137,12 @@ def query_with_allusers():
 #        a = []
 #        for row in iter_row(cursor, 10):
 ##            print(row)
-#            UidDepositDict = dict(zip(['login','uid','activate','expire','credit','reduction','reduction_date','registration','password','gid','disable',\
+#            Dict = dict(zip(['login','uid','activate','expire','credit','reduction','reduction_date','registration','password','gid','disable',\
 #                                        'company_id','bill_id','credit_date','deleted','fio','phone', 'email',\
 #                                        'street', 'build', 'flat', 'descr',\
 #                                        'contract_id', 'contract_date', 'pasport_num', 'pasport_date', 'pasport_grant',\
 #                                        'telegram','teleram_send','vk','vk_send','tpid', 'logins','ip','netmask','cid', 'status','deposit' ], row)) 
-#            all = a.append(UidDepositDict)
+#            all = a.append(Dict)
 #
 #    except Error as e:
 #        print(e)
@@ -180,13 +180,13 @@ def query_with_user(uid):
 
         for row in iter_row(cursor, 10):
 #            print(row)
-            UidDepositDict = dict(zip(['login','uid','activate','expire','credit','reduction','reduction_date','registration','password','groups_id','disable',\
+            Dict = dict(zip(['login','uid','activate','expire','credit','reduction','reduction_date','registration','password','groups_id','disable',\
                                         'company_id','bill_id','credit_date','deleted','fio','phone', 'email',\
                                         'street', 'building', 'flat', 'descr',\
                                         'contract_id', 'contract_date', 'pasport_num', 'pasport_date', 'pasport_grant',\
                                         'telegram','telegram_send','vk','vk_send','tpid', 'logins','ip','netmask','cid', 'status','deposit' ], row)) 
 
-            all = a.append(UidDepositDict)
+            all = a.append(Dict)
 
     except Error as e:
         print(e)
@@ -210,8 +210,8 @@ def query_with_users_uid():
         a = []
         for row in iter_row(cursor, 10):
 #            print(row)
-            UidDepositDict = dict(zip(['uid'], row)) 
-            all = a.append(UidDepositDict)
+            Dict = dict(zip(['uid'], row)) 
+            all = a.append(Dict)
 
     except Error as e:
         print(e)
@@ -235,8 +235,8 @@ def query_with_tarifs():
         a = []
         for row in iter_row(cursor, 10):
 #            print(row)
-            UidDepositDict = dict(zip(['tpid','name', 'day_fee', 'month_fee', 'active_day_fee', 'comments' ], row)) 
-            all = a.append(UidDepositDict)
+            Dict = dict(zip(['tpid','name', 'day_fee', 'month_fee', 'active_day_fee', 'comments' ], row)) 
+            all = a.append(Dict)
 
     except Error as e:
         print(e)
@@ -262,8 +262,8 @@ def query_with_tarif_tpid(tpid):
         a = []
         for row in iter_row(cursor, 10):
 #            print(row)
-            UidDepositDict = dict(zip(['tpid','name', 'day_fee', 'month_fee', 'active_day_fee', 'comments' ], row)) 
-            all = a.append(UidDepositDict)
+            Dict = dict(zip(['tpid','name', 'day_fee', 'month_fee', 'active_day_fee', 'comments' ], row)) 
+            all = a.append(Dict)
 
     except Error as e:
         print(e)
@@ -288,8 +288,8 @@ def query_with_groups():
         for row in iter_row(cursor, 10):
 #            print('=GROUP_ID=*'*10)
 #            print(row)
-            UidDepositDict = dict(zip(['gid','name', 'descr' ], row)) 
-            all = a.append(UidDepositDict)
+            Dict = dict(zip(['gid','name', 'descr' ], row)) 
+            all = a.append(Dict)
 
     except Error as e:
         print(e)
@@ -315,8 +315,8 @@ def query_with_group_gid(gid):
         a = []
         for row in iter_row(cursor, 10):
 #            print(row)
-            UidDepositDict = dict(zip(['gid','name', 'descr' ], row)) 
-            all = a.append(UidDepositDict)
+            Dict = dict(zip(['gid','name', 'descr' ], row)) 
+            all = a.append(Dict)
 
     except Error as e:
         print(e)

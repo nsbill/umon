@@ -6,7 +6,7 @@ import sys
 import time
 sys.path.insert(0, '/app/db')
 sys.path.insert(0, '/app/importation')
-from impfunc import sort_list_text, sort_list_num, select_street, select_build, select_flat, select_sbf, insert_sbf
+from impfunc import sort_list_text, sort_list_num, select_street, select_build, select_flat, select_sbf, insert_sbf, mtm_sbf, all_adr
 from abills_select import query_streetsbuildflat
 
 from mysql_select import query_with_allusers, query_with_user, query_with_users_uid, query_with_tarifs, query_with_tarif_tpid, query_with_groups, query_with_group_gid, query_with_user_uid
@@ -25,18 +25,30 @@ def index():
     list_streets = select_street(streets)           # сортировка улиц
     list_builds = select_build(builds)              # cортировка домов
     list_flats = select_flat(flats)                 # сортировка квартир
-
     sort_streets = select_sbf(street_build_flat,'street')   # выборка только улиц
     sort_builds = select_sbf(street_build_flat,'build')     # выборка только дома
     sort_flats = select_sbf(street_build_flat,'flat')       # выборка только кв
-    insert_sbf(sort_streets,list_streets,'street')          # добаляем в базу PostgreSQL новые улицы
-    insert_sbf(sort_builds,list_builds,'build')             # добаляем в базу PostgreSQL новые дома
-    insert_sbf(sort_flats,list_flats,'flat')                # добаляем в базу PostgreSQL новые кв
-    return render_template('imp/index.html', import_data=(list_streets,list_builds,list_flats))
+    insert_sbf(sort_streets,list_streets,'street')          # добавляем в базу PostgreSQL новые улицы
+    insert_sbf(sort_builds,list_builds,'build')             # добавляем в базу PostgreSQL новые дома
+    insert_sbf(sort_flats,list_flats,'flat')                # добавляем в базу PostgreSQL новые кв
+    return render_template('imp/index.html', import_data=(sort_streets,sort_builds,sort_flats))
 
+@imp.route('/mtm_sbf')
+def manytomany_sbf():
+    ''' Добавляем ManyToMany в street_build, build_flat '''
+    street_build_flat = query_streetsbuildflat()    # выборка с базы abills всех ул. домов кв.
+    mtm_sb = SortStreet.query.all()                 # выборка с базы PostgreSQL улиц
+    mtm_bf = SortBuild.query.all()                  # выборка с бызы PostgreSQL домов
+    mtm_sbf(street_build_flat,mtm_sb,mtm_bf)        # добавляем ManyToMany street,build,flat
+    info = 'Done Many-To-Many Streets,Builds,Flats' # информационная запись об завершение
+    return render_template('imp/index.html', import_data=info)
 
-
-#
+@imp.route('/all_adr')
+def select_address():
+    ''' Выборка с всех записей с таб. address '''
+    street_build_flat = query_streetsbuildflat()    # выборка с базы abills всех ул. домов кв.
+    info = all_adr(street_build_flat)
+    return render_template('imp/index.html', import_data=info)
 #
 #def InSortListNum(args):
 #    '''Сортируем по возр. и убираем дубликаты'''
@@ -298,7 +310,7 @@ def index():
 #        return st, bt, ft
 #
 #    def add_adr_uid(st,bt,ft,uid=None):
-#        '''Добавить пользователя в теб. adr_uid'''
+#        '''Добавить пользователя в таб. adr_uid'''
 #        if uid is not None:
 #            au = SelectAdressUid.query.filter_by(uid=uid).all()                 # Выборка из таб пользов.
 #            if au == []:                                                  # Если отсутствует польз добавить.

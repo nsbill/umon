@@ -23,3 +23,31 @@
 #        return flat
 
 #                if args in ",".join(list_street):
+#def adr_mtm(uid=None):
+#    '''Добавляет manytomany ул. дом кв и в таб. adr_uid'''
+#    if uid is not None:
+#        db.session.close()
+#        for i in uid:
+#            adruid = select_address_uid(uid=i)
+#            print('-=adruid=-'*7)
+#            print(adruid)
+#            street = adruid[0]
+#            print(street)
+#            build = adruid[1]
+#            print(build)
+#            flat = adruid[2]
+#            print(flat)
+#
+#            add_adr_uid(st=street,bt=build,ft=flat,uid=i)            # добавляем в таб adr_uid 
+#
+#            addstrbuild = build in street.building
+#            if addstrbuild == False:
+#                build.streetbuild.append(street)
+#                db.session.commit()
+#
+#            addbuildflat = flat in build.flat
+#            if addbuildflat == False:
+#                flat.buildflat.append(build)
+#                db.session.commit()
+#
+  
