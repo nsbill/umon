@@ -1,0 +1,45 @@
+{% extends 'users/search.html' %}
+{% block title %}
+ Search users of streets 
+{% endblock %}
+  {% block street_users %}
+<div>
+	<table style="font-size: 12px">
+	<thead>
+		<tr>
+			 <!--<th>#</th>-->
+			 <th>uid</th>
+			 <th>Адрес</th>
+			 <th>Логин</th>
+			 <th>Начало сессии</th>
+			 <th>Длительность</th>
+			 <th>IN</th>
+			 <th>OUT</th>
+			 <th>IP</th>
+			 <th>CID</th>
+			 <!--<th>Тариф</th>-->
+			 <th>NG/NAS</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for user in UsersOnline %}
+		<tr>
+      <td>{{ user.uid }}</td>
+      <td>{{ user.status }}</td>
+      <td>{{ user.login }}</td>
+      <td>{{ user.started }}</td>
+      <td>{{ user.acct_session_time }}</td>
+      <td>{{ user.acct_input_octets }}</td>
+      <td>{{ user.acct_output_octets }}</td>
+      <td>{{ user.ip }}</td>
+      <td>{{ user.cid }}</td>
+      <td>{{ user.info }}</td>
+      <td>{{ user.tp_id }}</td>
+      <td>{{ user.nas_id }}</td>
+		</tr>
+	{% endfor%}
+ </tbody>
+</table>
+</div>
+{% endblock %}
+</div>

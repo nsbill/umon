@@ -16,19 +16,26 @@
 </div>
 <div class="grid-x grid-margin-x">
   <div class="cell medium-4 large-2">
-    <div>
-      <label>Выберите улицу:
-         <select>
-          {% for i in ListSearch %}
-            <option value="{{ i[2] }}">{{ i[1] }}</option>
-          {% endfor %}
-         </select>
-        </label>  
-        <div class="input-group-button">
-          <input type="submit" class="button" value="OK">
-        </div>
-     </div>
-   </div>
+		<form action="{{ get_absolute_url }}/users/adr/search" method="post" id="name" enctype="multi-part/formdata">
+			<label>Выберите улицу</label>
+				<select class="form-control" name="name" title="Выберите улицу">
+          {% for street in ListSearch %}<option value={{ street[2] }}>{{ street[1] }}</option>{% endfor %}
+			  </select>
+
+			<label>Выберите дом</label>
+				<select class="form-control" name="user_build" id="result1" title="Выберите дом">
+				{% for i in building %}<option>{{ i }}</option>{% endfor %}
+			</select>
+				<input type="submit" class="button" value="Submit">
+		</form>
+     <table border = 1>
+         {% for value in result %}
+            <tr>
+               <td> {{ value }} </td>
+            </tr>
+         {% endfor %}
+      </table>
+  </div>
   <div class="cell medium-8 large-9">
     <ul class="dropdown menu" data-dropdown-menu>
       {% for i in ListStreetLetters %}
@@ -47,7 +54,7 @@
       {% endfor %}
     </ul>
     {% block street_users %}{% endblock %}
-    </div>
+  </div>
   </div>
 </div>
 <div>

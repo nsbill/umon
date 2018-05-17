@@ -6,6 +6,7 @@ sys.path.insert(0, '/app/db')
 sys.path.insert(0, '/app/users')
 
 from mysql_select import query_with_allusers, query_with_user, query_with_users_uid, query_with_tarifs, query_with_tarif_tpid, query_with_groups, query_with_group_gid,query_with_user_uid
+from abills_select import query_with_dv_online_user, query_with_dv_online_users
 
 def all_users():
     ''' Выборка всех пользователей из базы PostgreSQL '''
@@ -30,29 +31,41 @@ def select_address(uid):
     return adr
 
 def users_info(street_id):
+    '''Выборка пользователей по street_id'''
     street_id_users = SelectAdressUid.query.filter_by(street_id=street_id).all()     # Список улиц
-    list_users_uid = [ i.uid for i in street_id_users  ]                              # Список UID
+    list_users_uid = [ i.uid for i in street_id_users  ]                             # Список UID
     adr_list = [[uid, select_address(uid)] for uid in list_users_uid]                # Список адрессов
     adr_list.sort(key=lambda i: i[1])                                                # Сортировка списка адрессов
     sort_adr_uid = [i[0] for i in adr_list]                                          # Список отсортированных адрессов для получения UID
-    users = [ user_data(uid=uid) for uid in sort_adr_uid  ]                           # Список пользователей
+    users = [ user_data(uid=uid) for uid in sort_adr_uid  ]                          # Список пользователей
     return users
 
-def user_info(uid):
-    ''' Выборка данных о пользователе по UID и обновлнение данных '''
-    def upd_user(*args):
-        us = args[1][0]
-        adr = args[1][1]
-        netw = args[1][2]
-        userpi =args[1][3]
-        db.session.query(Users).filter(Users.uid == args[0]).update(us)
-        db.session.query(Address).filter(Address.uid == args[0]).update(adr)
-        db.session.query(Networks).filter(Networks.uid == args[0]).update(netw)
-        db.session.query(UsersPI).filter(UsersPI.uid == args[0]).update(userpi)
-        db.session.commit()
+def user_online(uid):
+    user_online = query_with_dv_online_user(uid)
+    return user_online
 
+def users_online():
+    users_online = query_with_dv_online_users()
+    return users_online
+
+def upd_user(uid):
+    ''' Обновление данных пользователя с базы Abills по UID'''
     ii = query_with_user_uid(uid)
-    upd_user(uid, ii)
+    args = [uid, ii]
+    us = args[1][0]
+    adr = args[1][1]
+    netw = args[1][2]
+    userpi =args[1][3]
+    db.session.query(Users).filter(Users.uid == args[0]).update(us)
+    db.session.query(Address).filter(Address.uid == args[0]).update(adr)
+    db.session.query(Networks).filter(Networks.uid == args[0]).update(netw)
+    db.session.query(UsersPI).filter(UsersPI.uid == args[0]).update(userpi)
+    db.session.commit()
+
+
+def user_info(uid):
+    ''' Выборка данных о пользователе по UID '''
+    upd_user(uid)
     UserInfo =[ i for i in db.session.query(Users,Address,Networks,UsersPI,Tarifs,Groups)
                                             .filter(Users.uid == uid,
                                                 Address.uid == uid,
