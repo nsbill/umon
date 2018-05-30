@@ -9,66 +9,77 @@
 {% endblock %}
 
 {% block content %}
-	  <div class="row">
-			<div class="grid-container">
-        <div class="grid-x grid-padding-x align-center"">
-						<div class="medium-8 cell">
-              Users all
-								<div class="col-sm-6">
-										<table class="table table-hover" style="font-size: 12px">
-										<tr>
-											 <th>UID:</th>
-											 <th>login:</th>
-											 <th>password:</th>
-											 <th>Ф.И.О:</th>
-											 <th>Телефон:</th>
-                       <th>Улица:</th>
-                       <th>Дом:</th>
-                       <th>Кв:</th>
-                       <th>IP:</th>
-                       <th>MAC address:</th>
-											 <th>Отключенa:</th>
-											 <th>Удалена:</th>
-										</tr>
-										</thead>
-                    <tbody>
-                      {% for info in UserInfo %}
-                        <tr>
-                          <td><b>{{  info[0].uid }}</b></td>
-                          <td><b>{{  info[0].login }}</b></td>
-                          <td><b>{{  info[0].password }}</b></td>
-                          <td><b>{{  info[0].fio}}</b></td>
-                          <td><b>{{  info[0].phone}}</b></td>
-                          <td><b>{{  info[1].street }}</b></td>
-                          <td><b>{{  info[1].building }}</b></td>
-                          <td><b>{{  info[1].flat }}</b></td>
-                          <td><b>{{  info[2].ip }}</b></td>
-                          <td><b>{{  info[2].cid }}</b></td>
-                          <td><b>{{  info[0].disable }}</b></td>
-                          <td><b>{{  info[0].delete }}</b></td>
-                        </tr>
-                        {% endfor %}
-                      {% for info in UsersALL %}
-                        <tr>
-                          <td><b>{{ info[0].uid }}</b></td>
-                          <td><b>{{ info[0].login }}</b></td>
-                          <td><b>{{ info[0].password }}</b></td>
-                          <td><b>{{ info[0].fio}}</b></td>
-                          <td><b>{{ info[0].phone}}</b></td>
-                          <td><b>{{ info[1].street }}</b></td>
-                          <td><b>{{ info[1].building }}</b></td>
-                          <td><b>{{ info[1].flat }}</b></td>
-                          <td><b>{{ info[2].ip }}</b></td>
-                          <td><b>{{ info[2].cid }}</b></td>
-                          <td><b>{{ info[0].disable }}</b></td>
-                          <td><b>{{ info[0].delete }}</b></td>
-                        </tr>
+<div class="row">
+  <div class="grid-container">
+    <div class="grid-x grid-padding-x align-center"">
+        <div class="medium-8 cell">
+            <div class="col-sm-6">
+                <table class="hover" style="font-size: 12px">
+                <tr>
+                   <th>UID:</th>
+                   <th>login:</th>
+                   <th>password:</th>
+                   <th>Ф.И.О:</th>
+                   <th>Телефон:</th>
+                   <th>Баланс:</th>
+                   <th>Улица:</th>
+                   <th>Дом:</th>
+                   <th>Кв:</th>
+                   <th>IP:</th>
+                   <th>MAC address:</th>
+                   <th>Откл./Удал.:</th>
+                </tr>
+                </thead>
+                <tbody>
+                  {% for user in UsersALL %}
+                    <tr>
+                      <td><b><a href="{{ get_absolute_url }}/users/user/{{ user[0].uid }}">{{ user[0].uid }}</a></b></td>
+                      <td><b>{{ user[0].login }}</b></td>
+                      <td><b>{{ user[0].password }}</b></td>
+                      <td><b>{{ user[0].fio}}</b></td>
+                      <td><b>{{ user[0].phone}}</b></td>
+                      {% for ui in user[0].users_pi %}
+                      <td><b>{{ ui.balance |round(2) }} р.</b></td>
                       {% endfor %}
-										</tbody>
-										</table>
-								</div>
+                      {% for i in user[0].address_id %}
+                      <td><b>{{ i.street }}</b></td>
+                      <td><b>{{ i.building }}</b></td>
+                      <td><b>{{ i.flat }}</b></td>
+                      {% endfor %}
+                      {% for ui in user[0].networks_id %}
+                      <td><b>{{ ui.ip }}</b></td>
+                      <td><b>{{ ui.cid }}</b></td>
+                      {% endfor %}
+                      {% if user[0].disable == false %}
+                      <td style="color: green"><b>Активна</b></td>
+                      {% else %}
+                      <td style="color: red"><b>Отключена</b></td>
+                      {% endif%}
+                      {% if user[0].delete == true %}
+                        <td style="color: red"><b>Удалена</b></td>
+                      {% endif%}
+                    </tr>
+                  {% endfor %}
+                </tbody>
+                </table>
             </div>
-				</div>
-			</div>
-		</div>
+        </div>
+    </div>
+  </div>
+</div>
+<nav aria-label="Pagination">
+  <ul class="pagination text-center">
+    <li {% if pages.prev_num %} class="pagination-previous disabled"><a href="{{ get_absolute_url   }}/users/?page={{ pages.prev_num }}" aria-label="Next page">Previous</a>{% endif %}</li>
+    {% for page in pages.iter_pages() %}
+    <li {% if page == pages.page %} class="current" {% endif %}
+      {% if not page %}
+      <li><a href="{{ get_absolute_url }}/users/?page={{ page_next }}" aria-label="...">...</a></li>
+      {% else %}
+      <li><a href="{{ get_absolute_url }}/users/?page={{ page }}" aria-label="Page {{ page }}">{{ page }}</a></li>
+      {% endif %}
+    </li>
+      {% endfor %}
+    <li {% if pages.next_num %} class="pagination-next"><a href="{{ get_absolute_url }}/users/?page={{ pages.next_num }}" aria-label="Next page">Next</a>{% endif %}</li>
+  </ul>
+</nav>
 {% endblock %}

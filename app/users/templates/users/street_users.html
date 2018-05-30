@@ -2,9 +2,12 @@
 {% block title %}
  Search users of streets 
 {% endblock %}
-  {% block street_users %}
+{% block street_users %}
 <div>
-	<table style="font-size: 12px">
+  <hr>
+</div>
+<div>
+	<table class="hover" style="font-size: 12px">
 	<thead>
 		<tr>
 			 <!--<th>#</th>-->
@@ -24,7 +27,7 @@
 	<tbody>
 	{% for user in UsersOnline %}
 		<tr>
-      <td><a href="/users/user/{{ user.uid }}">{{ user.uid }}</a></td>
+      <td><a href="{{ get_absolute_url }}/users/user/{{ user.uid }}">{{ user.uid }}</a></td>
       <td>{{ user.street }} {{ user.building }} {% if user.flat %}/ {{ user.flat }}{% endif%}</td>
       <td>{{ user.login }}</td>
       <td>{{ user.started }}</td>
@@ -41,7 +44,7 @@
 </table>
 </div>
 <div>
-    <table>
+    <table class="hover">
       <thead>
         <tr>
           <th width="20">UID</th>
@@ -58,8 +61,16 @@
       <tbody>
         {% for user in Users %}
           <tr>
-             <td><a href="/users/user/{{ user.uid }}">{{ user.uid }}</a></td>
-             <td>{{ user.login }}</td>
+            <td><a href="{{ get_absolute_url }}/users/user/{{ user.uid }}">{{ user.uid }}</a></td>
+             <td>
+              {{ user.login }}
+                {% for online in UsersOnline %}
+                  {% if online.uid == user.uid %}
+                    {% if online.status == 3 %}
+                      -- <b style="color: limegreen">ON</b>
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}</td>
              <td>{{ user.fio }}</td>
             {% for i in user.users_pi %}
              <td>{{ i.balance }}</td>

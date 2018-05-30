@@ -1,20 +1,35 @@
 from app import db
 from datetime import datetime
 from sqlalchemy.dialects import postgresql
+from flask_security import UserMixin, RoleMixin
 
-class AdminUser(db.Model):
-    id = db.Column(db.Integer,primary_key=True)
+roles_users = db.Table('roles_users',
+        db.Column('admin_user_id', db.Integer(), db.ForeignKey('admin_user.id')),
+        db.Column('admin_role_id', db.Integer(), db.ForeignKey('admin_role.id')),
+    )
+
+
+class AdminUser(db.Model, UserMixin):
+    __tablename__ = 'admin_user'
+    id = db.Column(db.Integer(),primary_key=True)
     login = db.Column(db.String(20), unique=True, nullable=False)
-    password = db.Column(db.String(100), nullable=False)
+    password = db.Column(db.String(255), nullable=False)
     username = db.Column(db.String(100))
     create = db.Column(db.DateTime, default=datetime.now())
     email = db.Column(db.String(120))
-    activ = db.Column(db.Boolean,default=False)
+    active = db.Column(db.Boolean,default=False)
+    roles = db.relationship('AdminRole', secondary=roles_users, backref=db.backref('adminusers', lazy='dynamic'))
 
     def __init__(self, *args, **kwargs):
         super(AdminUser, self).__init__(*args, **kwargs)
     def __repr__(self):
         return '<User %r>' % self.login
+
+class AdminRole(db.Model, RoleMixin):
+    __tablename__ = 'admin_role'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), unique=True)
+    descr = db.Column(db.String(255))
 
 class Users(db.Model):
     __tablename__ = 'users'
@@ -35,20 +50,22 @@ class Users(db.Model):
  #   tarifs_id = db.relationship('Tarifs', backref='tarifs', lazy='dynamic')
     users_pi = db.relationship('UsersPI', backref='userspi', lazy='dynamic')
 
-#    def __init__(self,uid,login,password,fio,phone,descr,disable,delete,tarifs_id,groups_id):
-#        self.uid = uid
-#        self.login = login
-#        self.password = password
-#        self.fio = fio
-#        self.phone = phone
-#        self.descr = descr
-#        self.disable = disable
-#        self.delete = delete
-#        self.tarifs_id = tarifs_id
-#        self.groups_id = groups_id
-#
-#    def __repr__(self):
-#        return "'UID': '{}', 'Login': '{}', 'Password': '{}', 'FIO': '{}', 'Phone':'{}', 'Disable':'{}'".format(self.uid, self.login, self.password, self.fio, self.phone, self.disable )
+    def __init__(self,uid,login,password,fio,phone,descr,disable,delete,tarifs_id,groups_id,address_id):
+        self.uid = uid
+        self.login = login
+        self.password = password
+        self.fio = fio
+        self.phone = phone
+        self.descr = descr
+        self.disable = disable
+        self.delete = delete
+        self.tarifs_id = tarifs_id
+        self.groups_id = groups_id
+        self.address_id = address_id
+
+    def __repr__(self):
+        return "'UID': '{}', 'Login': '{}', 'Password': '{}', 'FIO': '{}', 'Phone':'{}', 'Disable':'{}'".format(self.uid, self.login, self.password, self.fio, self.phone, self.disable)
+#        return "('UID','{}'),('Login','{}'),('Password','{}'),('FIO','{}'),('Phone','{}'),('Disable','{}')".format(self.uid, self.login, self.password, self.fio, self.phone, self.disable)
 
 
 class Address(db.Model):
@@ -60,14 +77,14 @@ class Address(db.Model):
     building = db.Column(db.String(10),default='')
     flat = db.Column(db.String(10),default='')
 
-#    def __init__(self,uid,address,street,building,flat):
-#        self.uid = uid
-#        self.address = address
-#        self.street = street
-#        self.building = building
-#        self.flat = flat
-#    def __repr__(self):
-#        return 'uid: {},street: {},build: {},flat: {}'.format(self.uid, self.street, self.building,self.flat)
+    def __init__(self,uid,address,street,building,flat):
+        self.uid = uid
+        self.address = address
+        self.street = street
+        self.building = building
+        self.flat = flat
+    def __repr__(self):
+        return 'uid: {},street: {},build: {},flat: {}'.format(self.uid, self.street, self.building,self.flat)
 
 class SelectAdressUid(db.Model):
     __tablename__='adr_uid'
@@ -145,7 +162,7 @@ class UsersPI(db.Model):
     reduction = db.Column('reduction', db.Float)
     reduction_date = db.Column('reduction_date', db.DateTime, default='2000-01-01')
     credit = db.Column('credit', db.Float)
-    credit_date = db.Column('credit_date', db.DateTime, default='2000-01-01')
+    credit_date = db.Column('credit_date', db.Date, default='2000-01-01')
     archive = db.Column('archive', db.Boolean,default=False)
     contract_id = db.Column('contract_id', db.String(25))
     contract_date = db.Column('contract_date', db.Date, default='2000-01-01')

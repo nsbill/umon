@@ -8,13 +8,18 @@ sys.path.insert(0, '/app/users')
 from mysql_select import query_with_allusers, query_with_user, query_with_users_uid, query_with_tarifs, query_with_tarif_tpid, query_with_groups, query_with_group_gid,query_with_user_uid
 from abills_select import query_with_dv_online_user, query_with_dv_online_users
 
-def all_users():
+def all_users(page):
     ''' Выборка всех пользователей из базы PostgreSQL '''
-    UsersALL =[ i for i in db.session.query(Users,Address,Networks,UsersPI)
-		.filter(Users.uid == Address.uid,
-			Users.uid == Networks.uid,
-			Users.uid == UsersPI.uid).all()]
-    return UsersALL
+    try:
+        if page and page.isdigit():
+            page = int(page)
+        else:
+            page = 1
+        UsersALL = db.session.query(Users,Address,Networks,UsersPI).filter(Users.uid == Address.uid,Users.uid == Networks.uid,Users.uid == UsersPI.uid).paginate(page=page,per_page=50)
+        return UsersALL
+    except:
+        UsersALL = db.session.query(Users,Address,Networks,UsersPI).filter(Users.uid == Address.uid,Users.uid == Networks.uid,Users.uid == UsersPI.uid).paginate(page=1,per_page=50)
+        return UsersALL
 
 def user_data(uid):
     ''' Выборка пользователя с таб. users из PostgreSQL '''
@@ -119,3 +124,21 @@ def litters_street(func):
     list_streetletters = liststreet[1]      # Словарь улиц по заглавной букве 
     return list_streetletters, liststreet
 
+def search_user(search):
+    if search:
+        item = Users.query.filter(Users.login.contains(search) | Users.fio.contains(search) | Users.phone.contains(search)).all()
+        list_uid  = []
+        for i in item:
+#            adr = [ {'street': sbf.street, 'build': sbf.building, 'flat': sbf.flat } for sbf in i.address_id ]
+            adr = [ sbf for sbf in i.address_id ]
+            list_uid.append({'uid': i.uid,
+                             'login': i.login,
+                             'fio': i.fio,
+                             'phone': i.phone,
+                             'address': adr })
+#        list_search = [ user_data(uid) for uid in list_uid]
+        list_search = list_uid
+        return list_search
+    else:
+        item = []
+    return item

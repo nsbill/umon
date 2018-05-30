@@ -109,8 +109,8 @@ def query_with_dv_online_user(uid):
                     WHERE d.uid = " + str(uid) + " limit 1")
         a = []
         for row in iter_row(cursor, 10):
-           dict = dict(zip(['uid','status','login','started','acct_session_time','acct_input_octets','acct_output_octets','ip','cid','info','tp_id','nas_id'], row ))
-           a.append(dict)
+           Dict = dict(zip(['uid','status','login','started','acct_session_time','acct_input_octets','acct_output_octets','ip','cid','info','tp_id','nas_id'], row ))
+           a.append(Dict)
         a = a[0]
     except Error as e:
         print(e)

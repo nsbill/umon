@@ -66,39 +66,44 @@
 -->
       </div>
     </div>
-						{% if UserOnLine %}
-    <div class="row" >
-      <div class="grid-x grid-padding-x">
-        <div class="cell small-5 medium-12 large-12">
-						<div>
-							<table class="hover" style="font-size: 12px">
-							<thead>
-								<tr>
-									 <th>Начало сессии</th>
-									 <th>Длительность</th>
-									 <th>IN</th>
-									 <th>OUT</th>
-									 <th>IP</th>
-									 <th>CID</th>
-									 <th>NG/NAS</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>{{ UserOnLine.started }}</td>
-									<td>{{ UserOnLine.acct_session_time }}</td>
-									<td>{{ UserOnLine.acct_input_octets|filesizeformat }}</td>
-									<td>{{ UserOnLine.acct_output_octets|filesizeformat }}</td>
-									<td>{{ UserOnLine.ip }}</td>
-									<td>{{ UserOnLine.cid }}</td>
-									<td>{{ UserOnLine.info }} / {{ UserOnLine.nas_id }}</td>
-								</tr>
-							</tbody>
-							</table>
-				</div>
-			</div>
-		</div>
-				{% endif %}
+<div>
+  <table class="hover" style="font-size: 12px">
+  <thead>
+    <tr>
+       <!--<th>#</th>-->
+       <th>uid</th>
+       <th>Адрес</th>
+       <th>Логин</th>
+       <th>Начало сессии</th>
+       <th>Длительность</th>
+       <th>IN</th>
+       <th>OUT</th>
+       <th>IP</th>
+       <th>CID</th>
+       <!--<th>Тариф</th>-->
+       <th>NG/NAS</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for user in UserOnLine %}
+    <tr>
+      <td><a href="{{ get_absolute_url }}/users/user/{{ user.uid }}">{{ user.uid }}</a></td>
+      <td>{{ user.street }} {{ user.building }} {% if user.flat %}/ {{ user.flat }}{% endif%}</td>
+      <td>{{ user.login }}</td>
+      <td>{{ user.started }}</td>
+      <td>{{ user.acct_session_time }}</td>
+      <td>{{ user.acct_input_octets | filesizeformat }}</td>
+      <td>{{ user.acct_output_octets | filesizeformat }}</td>
+      <td>{{ user.ip }}</td>
+      <td>{{ user.cid }}</td>
+      <td>{{ user.info }} / {{ user.nas_id }}</td>
+      <!-- <td>{{ user.tp_id }}</td> -->
+    </tr>
+  {% endfor%}
+  </tbody>
+ </table>
+</div>
+
     <div class="row" >
       <div class="grid-x grid-padding-x align-center">
         <div class="cell small-12 medium-5 large-5">
