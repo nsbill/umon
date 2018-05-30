@@ -65,7 +65,6 @@ class Users(db.Model):
 
     def __repr__(self):
         return "'UID': '{}', 'Login': '{}', 'Password': '{}', 'FIO': '{}', 'Phone':'{}', 'Disable':'{}'".format(self.uid, self.login, self.password, self.fio, self.phone, self.disable)
-#        return "('UID','{}'),('Login','{}'),('Password','{}'),('FIO','{}'),('Phone','{}'),('Disable','{}')".format(self.uid, self.login, self.password, self.fio, self.phone, self.disable)
 
 
 class Address(db.Model):

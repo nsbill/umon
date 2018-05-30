@@ -1,0 +1,45 @@
+{% extends 'users/search.html' %}
+{% block title %}
+Search users of streets
+{% endblock %}
+{% block search_users %}
+<div>
+  <hr>
+</div>
+<div>
+    <table class="hover">
+      <thead>
+        <tr>
+          <th width="20">UID</th>
+          <th>Логин</th>
+          <th>ФИО</th>
+          <th>Баланс</th>
+          <th>Кредит</th>
+          <th>Телефон</th>
+          <th>Улица</th>
+          <th>Дом</th>
+          <th>Кв</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in Users %}
+          <tr>
+            <td><a href="{{ get_absolute_url }}/users/user/{{ user.uid }}">{{ user.uid }}</a></td>
+             <td>{{ user.login }}
+             <td>{{ user.fio }}</td>
+     				{% for u in user.userspi %}
+             <td>{{ u.balance }}</td>
+             <td>{{ u.credit }}</td>
+            {% endfor %}
+             <td>{{ user.phone }}</td>
+     				{% for a in user.address %}
+						 <td>{{ a.street }}</td>
+						 <td>{{ a.building }}</td>
+						 <td>{{ a.flat }}</td>
+            {% endfor %}
+          </tr>
+         {% endfor %}
+      </tbody>
+    </table>
+</div>
+{% endblock %}

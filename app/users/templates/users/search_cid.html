@@ -1,0 +1,63 @@
+{% extends 'users/search.html' %}
+{% block title %}
+ Search users of streets
+{% endblock %}
+{% block content %}
+<div>
+  <hr>
+</div>
+<div class="top-bar-right">
+  <form action="{{ get_absolute_url  }}/users/cid" method="GET" id="cid" enctype="multi-part/formdata">
+     <ul class="menu">
+      <li><input type="search" placeholder="поиск по MAC" name="cid" value="{{ request.args.get('cid', '') }}"></li>
+      <li><input type="submit" class="button" value="Поиск"></li>
+     </ul>
+  </form>
+</div>
+<div>
+  <hr>
+</div>
+<div>
+    <table class="hover">
+      <thead>
+        <tr>
+          <th width="20">UID</th>
+          <th>Логин</th>
+          <th>ФИО</th>
+          <th>Баланс</th>
+          <th>Кредит</th>
+          <th>Телефон</th>
+					<th>IP</th>
+					<th>MAC</th>
+          <th>Улица</th>
+          <th>Дом</th>
+          <th>Кв</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in Users %}
+          <tr>
+            <td><a href="{{ get_absolute_url }}/users/user/{{ user.uid }}">{{ user.uid }}</a></td>
+             <td>{{ user.login }}
+             <td>{{ user.fio }}</td>
+            {% for u in user.userspi %}
+             <td>{{ u.balance }}</td>
+             <td>{{ u.credit }}</td>
+            {% endfor %}
+             <td>{{ user.phone }}</td>
+            {% for n in user.networks %}
+             <td>{{ n.ip }}</td>
+             <td>{{ n.cid }}</td>
+            {% endfor %}
+            {% for a in user.address %}
+             <td>{{ a.street }}</td>
+             <td>{{ a.building }}</td>
+             <td>{{ a.flat }}</td>
+            {% endfor %}
+          </tr>
+         {% endfor %}
+      </tbody>
+    </table>
+</div>
+
+{% endblock %}

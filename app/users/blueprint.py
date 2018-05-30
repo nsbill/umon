@@ -3,7 +3,7 @@ from flask import render_template,request,redirect
 from datetime import datetime
 import sys
 sys.path.insert(0, '/app/users')
-from users_impfunc import search, litters_street, all_users, users_info, user_info, user_data, select_address, upd_user, user_online, users_online, search_user
+from users_impfunc import search, litters_street, all_users, users_info, user_info, user_data, select_address, upd_user, user_online, users_online, search_user, search_cid
 
 from flask_security import login_required
 users = Blueprint('clients',__name__, template_folder='templates')
@@ -14,9 +14,6 @@ users = Blueprint('clients',__name__, template_folder='templates')
 def index():
     ''' Выборка всех пользователей из базы PostgreSQL '''
     page = request.args.get('page')
-    search = request.args.get('search')
-    print('='*9)
-    print(search)
     All_Users = all_users(page=page)
     UsersALL = [ user for user in All_Users.items ]
     if All_Users.page <= All_Users.pages:
@@ -76,13 +73,32 @@ def street_id_users(street_id):
                 online.append( i )
     return render_template('users/street_users.html', StreetUsers=street_id_users, ListSearch=liststreet[1][0], ListStreetLetters=liststreet[0].items(), Users=users_data,UsersOnline=online)
 
+@litters_street
+@search
 @users.route('search', methods=['GET'])
+@login_required
 def searchuser():
     search = request.args.get('search')
-    print('-()-'*10)
-    print(search)
     if search:
         query = search_user(search)
-        for i in query:
-            print(i)
-    return render_template('users/search.html',Users=query)
+    else:
+        query = []
+    liststreet = litters_street(search_street)
+    return render_template('users/search_user.html',Users=query,ListSearch=liststreet[1][0], ListStreetLetters=liststreet[0].items())
+
+@litters_street
+@search
+@users.route('cid', methods=['GET'])
+@login_required
+def searchcid():
+    search = request.args.get('cid')
+    print('=-='*15)
+    print(search)
+    if search:
+        query = search_cid(search)
+        print('-'*20)
+        print(query)
+    else:
+        query = []
+    liststreet = litters_street(search_street)
+    return render_template('users/search_cid.html', Users=query,ListSearch=liststreet[1][0], ListStreetLetters=liststreet[0].items())

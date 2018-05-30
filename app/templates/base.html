@@ -19,30 +19,30 @@
 		</div>
 
 		<div class="top-bar" id="example-menu">
-			<div class="top-bar-left">
-				<ul class="dropdown menu" data-dropdown-menu>
-					<li class="menu-text">UMon</li>
-					<li class="has-submenu">
-            <a href="{{ get_absolute_url  }}/users/adr/search">Поиск</a>
-						<ul class="submenu menu vertical" data-submenu>
-              <li><a href="{{ get_absolute_url  }}/users/adr/search">Поиск по улицам</a></li>
-							<li><a href="/users/error">Поиск по домам</a></li>
-							<li><a href="/users/error">Поиск по логину</a></li>
-						</ul>
-					</li>
-					<li><a href="/users/">Пользователи</a></li>
-					<li><a href="/users/error">Пополнить</a></li>
-					<li><a href="/users/error">Статистика</a></li>
+      <div class="top-bar-left">
+        <ul class="dropdown menu" data-dropdown-menu>
+          <li class="menu-text">UMon</li>
+          <li class="has-submenu">
+            <a href="{{ get_absolute_url }}/users/adr/search">Поиск</a>
+            <ul class="submenu menu vertical" data-submenu>
+              <li><a href="{{ get_absolute_url }}/users/adr/search">Поиск по улицам</a></li>
+              <li><a href="/users/error">Поиск по домам</a></li>
+              <li><a href="{{ get_absolute_url }}/users/cid">Поиск по MAC</a></li>
+            </ul>
+          </li>
+          <li><a href="/users/">Пользователи</a></li>
+          <li><a href="/users/error">Пополнить</a></li>
+          <li><a href="/users/error">Статистика</a></li>
           <li><a href="{{ get_absolute_url   }}/auth/logout"> Выход </a></li>
-				</ul>
-			</div>
-			<div class="top-bar-right">
-          <form action="{{ get_absolute_url  }}/users/search" method="GET" id="search" enctype="multi-part/formdata">
-        <ul class="menu">
-            <li><input type="search" placeholder="логин" name="search" value="{{ request.args.get('search', '') }}"></li>
-            <li><input type="submit" class="button" value="Поиск"></li>
         </ul>
-          </form>
+      </div>
+      <div class="top-bar-right">
+        <form action="{{ get_absolute_url  }}/users/search" method="GET" id="search" enctype="multi-part/formdata">
+           <ul class="menu">
+            <li><input type="search" placeholder="Универсальный" name="search" value="{{ request.args.get('search', '') }}"></li>
+            <li><input type="submit" class="button" value="Поиск"></li>
+           </ul>
+        </form>
       </div>
 		</div>
     {% block content_title %}{% endblock %}

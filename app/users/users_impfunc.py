@@ -125,19 +125,46 @@ def litters_street(func):
     return list_streetletters, liststreet
 
 def search_user(search):
-    if search:
-        item = Users.query.filter(Users.login.contains(search) | Users.fio.contains(search) | Users.phone.contains(search)).all()
-        list_uid  = []
+    '''Поиск пользователя от 2 символов с вхожденем в логин или Ф.И.О. или телефон '''
+    if len(search) >= 2:
+        item = Users.query.filter(Users.login.contains(search) |
+               Users.fio.contains(search) |
+               Users.phone.contains(search)).all()
+        list_search  = []
         for i in item:
-#            adr = [ {'street': sbf.street, 'build': sbf.building, 'flat': sbf.flat } for sbf in i.address_id ]
             adr = [ sbf for sbf in i.address_id ]
+            upi = [ upi for upi in i.users_pi ]
             list_uid.append({'uid': i.uid,
                              'login': i.login,
                              'fio': i.fio,
                              'phone': i.phone,
-                             'address': adr })
-#        list_search = [ user_data(uid) for uid in list_uid]
-        list_search = list_uid
+                             'address': adr,
+                             'userspi': upi})
+        return list_search
+    else:
+        item = []
+    return item
+
+def search_cid(search):
+    '''Поиск MAC address'''
+    if len(search) == 17 or 'ANY' == search.upper():
+#        item = Networks.query.filter_by(cid=search).all()
+        item = Networks.query.filter(Networks.cid.like(search)).all()
+        list_uid = [ i.uid for i in item ]
+        list_search = []
+        for uid in list_uid:
+            item = Users.query.filter_by(uid=uid).all()
+            for i in item:
+                adr = [ sbf for sbf in i.address_id ]
+                upi = [ upi for upi in i.users_pi ]
+                net = [ net for net in i.networks_id ]
+                list_search.append({'uid': i.uid,
+                                 'login': i.login,
+                                 'fio': i.fio,
+                                 'phone': i.phone,
+                                 'address': adr,
+                                 'userspi': upi,
+                                 'networks': net })
         return list_search
     else:
         item = []

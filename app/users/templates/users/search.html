@@ -53,14 +53,10 @@
       {% endfor %}
     </ul>
     {% block street_users %}{% endblock %}
+    {% block search_users %}{% endblock %}
   </div>
   </div>
 </div>
 <div>
 </div>
-{% for user in Users %}
-<ul>
-  <li>{{ user.uid }} {{ user.login }} {{ user.fio }} {{ user.phone }} {% for a in user.address %}{{ a.street }} {{ a.building }} {% if a.flat %} / {{ a.flat }}{% endif %} {% endfor %}</li>
-</ul>
-{% endfor %}
 {% endblock %}
