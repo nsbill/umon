@@ -16,8 +16,9 @@ class AdminUser(db.Model, UserMixin):
     password = db.Column(db.String(255), nullable=False)
     username = db.Column(db.String(100))
     create = db.Column(db.DateTime, default=datetime.now())
-    email = db.Column(db.String(120))
+    email = db.Column(db.String(120), unique=True, nullable=False)
     active = db.Column(db.Boolean,default=False)
+    descr = db.Column(db.String(255))
     roles = db.relationship('AdminRole', secondary=roles_users, backref=db.backref('adminusers', lazy='dynamic'))
 
     def __init__(self, *args, **kwargs):

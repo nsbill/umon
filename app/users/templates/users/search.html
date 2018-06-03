@@ -52,8 +52,30 @@
         </li>
       {% endfor %}
     </ul>
-    {% block street_users %}{% endblock %}
     {% block search_users %}{% endblock %}
+      <div>
+           <table class="hover">
+             <thead>
+               <tr>
+                 <th>Улица</th>
+                 <th>Кол-во пользователей</th>
+                 <th>ONLINE</th>
+                 <th>OFFLINE</th>
+               </tr>
+             </thead>
+             <tbody>
+                {% for count in Count_Street %}
+                <tr> 
+                  <td><a href="{{ get_absolute_url  }}/users/adr/street_id/{{ count[0][1] }}">{{ count[0][0] }}</a></td> 
+                  <td>{{ count[1] }} 
+                  <td>{{ count[2] }} 
+                  <td>{{ count[3] }} 
+                </tr> 
+               {% endfor %} 
+            </tbody> 
+          </table> 
+      </div> 
+    {% block street_users %}{% endblock %}
   </div>
   </div>
 </div>

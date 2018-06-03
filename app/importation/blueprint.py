@@ -14,8 +14,10 @@ import subprocess
 from models import Users, Address, Networks, Groups, Tarifs, UsersPI, SortStreet, SortBuild, SortFlat, SelectAdressUid
 
 imp = Blueprint('importation',__name__, template_folder='templates')
+from flask_security import login_required
 
 @imp.route('/')
+@login_required
 def index():
     ''' Import Abills Address Users'''
     street_build_flat = query_streetsbuildflat()    # выборка с базы abills всех ул. домов кв.
@@ -34,6 +36,7 @@ def index():
     return render_template('imp/index.html', import_data=(sort_streets,sort_builds,sort_flats))
 
 @imp.route('/mtm_sbf')
+@login_required
 def manytomany_sbf():
     ''' Добавляем ManyToMany в street_build, build_flat '''
     street_build_flat = query_streetsbuildflat()    # выборка с базы abills всех ул. домов кв.
@@ -44,6 +47,7 @@ def manytomany_sbf():
     return render_template('imp/index.html', import_data=info)
 
 @imp.route('/all_adr')
+@login_required
 def select_address():
     ''' Выборка с всех записей с таб. address '''
     street_build_flat = query_streetsbuildflat()    # выборка с базы abills всех ул. домов кв.
@@ -51,6 +55,7 @@ def select_address():
     return render_template('imp/index.html', import_data=info)
 
 @imp.route('/addusers')
+@login_required
 def addusers():
     ''' Перенос пользователей, тарифных планов, групп из базы Abills '''
 #Tarifs

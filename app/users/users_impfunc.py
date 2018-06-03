@@ -114,15 +114,35 @@ def search(func):
     list_street_letters = street_letters(add=all_street)  # получаем словарь улиц
     return all_street, list_street_letters
 
+
+def list_street():
+    ''' Cписок улиц '''
+    streets = search(list_street)
+    return streets
+
 def litters_street(func):
     ''' Список адрессов и словарь улиц по заглавной букве '''
-    def list_street():
-        ''' Cписок улиц'''
-        streets = search(list_street)
-        return streets
     liststreet = list_street()              # Список улиц
     list_streetletters = liststreet[1]      # Словарь улиц по заглавной букве 
     return list_streetletters, liststreet
+
+
+def count_street_online(func):
+    ''' Инфрмация кол-во пользователей на улице online/offline '''
+    streets = list_street()
+    u = [ i['uid'] for i in users_online() ]
+    users = []
+    for street in streets[0]:
+        street_users = SelectAdressUid.query.filter_by(street_id=street[2]).all() #выборка по street_id всех пользователей  
+        users_uid = [ (i.uid, i.street_id) for i in street_users ]                #выборка uid,street_id на каждой улице
+        users_count_online = 0
+        for i in users_uid:
+            if i[0] in u:
+                users_count_online += 1
+        users_count_all = len(users_uid)                                          #подсчет кол-во пользователей на улице
+        users_count_offline = users_count_all - users_count_online
+        users.append((street[1:3],users_count_all, users_count_online, users_count_offline, users_uid ))
+    return users
 
 def search_user(search):
     '''Поиск пользователя от 2 символов с вхожденем в логин или Ф.И.О. или телефон '''
@@ -134,7 +154,7 @@ def search_user(search):
         for i in item:
             adr = [ sbf for sbf in i.address_id ]
             upi = [ upi for upi in i.users_pi ]
-            list_uid.append({'uid': i.uid,
+            list_search.append({'uid': i.uid,
                              'login': i.login,
                              'fio': i.fio,
                              'phone': i.phone,
